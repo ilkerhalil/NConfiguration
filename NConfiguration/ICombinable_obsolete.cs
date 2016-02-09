@@ -8,7 +8,7 @@ namespace NConfiguration
 	/// <summary>
 	/// object implementing this interface can be reduced at boot
 	/// </summary>
-	public interface ICombinable
+	public interface ICombinable_obsolete
 	{
 		/// <summary>
 		/// combine by other instance

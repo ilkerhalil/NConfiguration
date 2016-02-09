@@ -159,7 +159,7 @@ namespace NConfiguration
 		/// <typeparam name="T">type of instance of configuration</typeparam>
 		/// <param name="settings">instance of application settings</param>
 		/// <returns>Instance of configuration or null.</returns>
-		public static T TryCombine<T>(this IAppSettings settings) where T : class, ICombinable
+		public static T TryCombine<T>(this IAppSettings settings) where T : class, ICombinable_obsolete
 		{
 			return TryCombine<T>(settings, GetSectionName<T>());
 		}
@@ -171,7 +171,7 @@ namespace NConfiguration
 		/// <param name="settings">instance of application settings</param>
 		/// <param name="sectionName">section name</param>
 		/// <returns>Instance of configuration or null.</returns>
-		public static T TryCombine<T>(this IAppSettings settings, string sectionName) where T : class, ICombinable
+		public static T TryCombine<T>(this IAppSettings settings, string sectionName) where T : class, ICombinable_obsolete
 		{
 			T sum = null;
 			foreach(var cfg in settings.LoadCollection<T>(sectionName))
@@ -190,7 +190,7 @@ namespace NConfiguration
 		/// </summary>
 		/// <typeparam name="T">type of instance of configuration</typeparam>
 		/// <param name="settings">instance of application settings</param>
-		public static T Combine<T>(this IAppSettings settings) where T : class, ICombinable
+		public static T Combine<T>(this IAppSettings settings) where T : class, ICombinable_obsolete
 		{
 			return Combine<T>(settings, GetSectionName<T>());
 		}
@@ -201,7 +201,7 @@ namespace NConfiguration
 		/// <typeparam name="T">type of instance of configuration</typeparam>
 		/// <param name="settings">instance of application settings</param>
 		/// <param name="sectionName">section name</param>
-		public static T Combine<T>(this IAppSettings settings, string sectionName) where T : class, ICombinable
+		public static T Combine<T>(this IAppSettings settings, string sectionName) where T : class, ICombinable_obsolete
 		{
 			T sum = null;
 			foreach (var cfg in settings.LoadCollection<T>(sectionName))

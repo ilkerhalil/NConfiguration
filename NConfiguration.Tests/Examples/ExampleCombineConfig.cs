@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace NConfiguration.Examples
 {
-	public class ExampleCombineConfig : ICombinable
+	public class ExampleCombineConfig : ICombinable_obsolete
 	{
 		[XmlAttribute]
 		public string F = null;

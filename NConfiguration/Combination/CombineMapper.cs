@@ -39,7 +39,7 @@ namespace NConfiguration.Combination
 
 		public object CreateFunction(Type targetType, IGenericCombiner combiner)
 		{
-			if (typeof(ICombinable).IsAssignableFrom(targetType))
+			if (typeof(ICombinable_obsolete).IsAssignableFrom(targetType))
 			{
 				var funcType = typeof(Func<,,>).MakeGenericType(targetType, targetType, targetType);
 
@@ -72,7 +72,7 @@ namespace NConfiguration.Combination
 
 		internal static readonly MethodInfo CustomClassCombineMI = typeof(CombineMapper).GetMethod("CustomClassCombine", BindingFlags.Static | BindingFlags.NonPublic);
 
-		internal static T CustomClassCombine<T>(T x, T y) where T : class, ICombinable
+		internal static T CustomClassCombine<T>(T x, T y) where T : class, NConfiguration.ICombinable_obsolete
 		{
 			if (x == null)
 				return y;
@@ -83,7 +83,7 @@ namespace NConfiguration.Combination
 
 		internal static readonly MethodInfo CustomStructCombineMI = typeof(CombineMapper).GetMethod("CustomStructCombine", BindingFlags.Static | BindingFlags.NonPublic);
 
-		internal static T CustomStructCombine<T>(T x, T y) where T : struct, ICombinable
+		internal static T CustomStructCombine<T>(T x, T y) where T : struct, NConfiguration.ICombinable_obsolete
 		{
 			x.Combine(y);
 			return x;

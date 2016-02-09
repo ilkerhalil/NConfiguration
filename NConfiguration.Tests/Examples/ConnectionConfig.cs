@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace NConfiguration.Examples
 {
-	public class ConnectionConfig : ICombinable
+	public class ConnectionConfig : ICombinable_obsolete
 	{
 		[XmlAttribute("Server")]
 		public string Server { get; set; }

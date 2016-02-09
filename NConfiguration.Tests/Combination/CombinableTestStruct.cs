@@ -2,7 +2,7 @@ using System;
 
 namespace NConfiguration.Combination
 {
-	public struct CombinableTestStruct: ICombinable
+	public struct CombinableTestStruct: ICombinable_obsolete
 	{
 		public string Text;
 

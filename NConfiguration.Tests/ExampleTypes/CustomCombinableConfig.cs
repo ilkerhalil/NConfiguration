@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace NConfiguration.ExampleTypes
 {
-	public class CustomCombinableConfig : ICombinable
+	public class CustomCombinableConfig : ICombinable_obsolete
 	{
 		[XmlAttribute("Field1")]
 		public string Field1 { get; set; }
