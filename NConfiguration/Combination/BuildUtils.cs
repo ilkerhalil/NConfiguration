@@ -6,7 +6,7 @@ using System.Text;
 
 namespace NConfiguration.Combination
 {
-	internal static class BuildUtils
+	internal static partial class BuildUtils
 	{
 		private static readonly HashSet<Type> _simplySystemStructs = new HashSet<Type>
 			{
@@ -36,6 +36,34 @@ namespace NConfiguration.Combination
 
 		public static object CreateFunction(Type targetType)
 		{
+			var combinerAttr = targetType.GetCustomAttribute<CombinerAttribute>(false);
+			if (combinerAttr != null)
+			{
+				//UNDONE combinerAttr.CombinerType maybe generic
+				if (typeof(ICombiner<>).MakeGenericType(targetType).IsAssignableFrom(combinerAttr.CombinerType))
+				{
+					return CreateByCombinerInterfaceMI.MakeGenericMethod(combinerAttr.CombinerType, targetType).Invoke(null, new object[0]);
+				}
+			}
+
+			if(typeof(ICombinable<>).MakeGenericType(targetType).IsAssignableFrom(targetType))
+			{
+				var combinerType = (targetType.IsValueType ?
+					typeof(GenericStructCombiner<>) :
+					typeof(GenericClassCombiner<>)).MakeGenericType(targetType);
+
+				return CreateByCombinerInterfaceMI.MakeGenericMethod(combinerType, targetType).Invoke(null, new object[0]);
+			}
+
+			if (typeof(ICombinable).IsAssignableFrom(targetType))
+			{
+				var combinerType = (targetType.IsValueType ?
+					typeof(StructCombiner<>) :
+					typeof(ClassCombiner<>)).MakeGenericType(targetType);
+
+				return CreateByCombinerInterfaceMI.MakeGenericMethod(combinerType, targetType).Invoke(null, new object[0]);
+			}
+
 			if (IsSimplyStruct(targetType))
 			{
 				var supressValue = CreateDefaultSupressor(targetType);
@@ -44,6 +72,13 @@ namespace NConfiguration.Combination
 
 			//UNDONE
 			throw new NotImplementedException();
+		}
+
+		internal static readonly MethodInfo CreateByCombinerInterfaceMI = GetMethod("CreateByCombinerInterface");
+		internal static Combine<T> CreateByCombinerInterface<C, T>() where C: ICombiner<T>
+		{
+			var combiner = Activator.CreateInstance<C>();
+			return combiner.Combine;
 		}
 
 		internal static object CreateForwardCombiner(Type type, object supressValue)

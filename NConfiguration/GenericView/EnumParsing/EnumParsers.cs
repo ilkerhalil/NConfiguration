@@ -1,4 +1,7 @@
-﻿using System;
+﻿
+
+
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -6,6 +9,7 @@ using System.Text;
 
 namespace NConfiguration.GenericView
 {
+
 	internal class ByteEnumParser<T>: IEnumParser<T> where T: struct
 	{
 		private readonly Dictionary<string, T> _nameMap;
@@ -118,6 +122,7 @@ namespace NConfiguration.GenericView
 			return (T)(ValueType)result;
 		}
 	}
+
 
 	internal class SByteEnumParser<T>: IEnumParser<T> where T: struct
 	{
@@ -232,6 +237,7 @@ namespace NConfiguration.GenericView
 		}
 	}
 
+
 	internal class Int16EnumParser<T>: IEnumParser<T> where T: struct
 	{
 		private readonly Dictionary<string, T> _nameMap;
@@ -344,6 +350,7 @@ namespace NConfiguration.GenericView
 			return (T)(ValueType)result;
 		}
 	}
+
 
 	internal class Int32EnumParser<T>: IEnumParser<T> where T: struct
 	{
@@ -458,6 +465,7 @@ namespace NConfiguration.GenericView
 		}
 	}
 
+
 	internal class Int64EnumParser<T>: IEnumParser<T> where T: struct
 	{
 		private readonly Dictionary<string, T> _nameMap;
@@ -570,6 +578,7 @@ namespace NConfiguration.GenericView
 			return (T)(ValueType)result;
 		}
 	}
+
 
 	internal class UInt16EnumParser<T>: IEnumParser<T> where T: struct
 	{
@@ -684,6 +693,7 @@ namespace NConfiguration.GenericView
 		}
 	}
 
+
 	internal class UInt32EnumParser<T>: IEnumParser<T> where T: struct
 	{
 		private readonly Dictionary<string, T> _nameMap;
@@ -797,6 +807,7 @@ namespace NConfiguration.GenericView
 		}
 	}
 
+
 	internal class UInt64EnumParser<T>: IEnumParser<T> where T: struct
 	{
 		private readonly Dictionary<string, T> _nameMap;
@@ -909,5 +920,6 @@ namespace NConfiguration.GenericView
 			return (T)(ValueType)result;
 		}
 	}
+
 
 }
