@@ -47,8 +47,10 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Combination\CombinableTestStruct.cs" />
     <Compile Include="Combination\DefaultCombinationTests\CombinableTests.cs" />
-    <Compile Include="Combination\DefaultCombinationTests\ClassAttributeTests.cs" />
+    <Compile Include="Combination\DefaultCombinationTests\TypeAttributeCombinerTests.cs" />
     <Compile Include="Combination\DefaultCombinationTests\SimplyTypeTests.cs" />
+    <Compile Include="Combination\DefaultCombinationTests\TestAttrStruct.cs" />
+    <Compile Include="Combination\DefaultCombinationTests\TestGenericAttrClass.cs" />
     <Compile Include="Combination\DefaultCombinationTests\TestCombinableClass.cs" />
     <Compile Include="Combination\DefaultCombinationTests\TestGenericCombinableClass.cs" />
     <Compile Include="Combination\DefaultCombinationTests\TestAttrClass.cs" />

@@ -39,10 +39,10 @@ namespace NConfiguration.Combination
 			var combinerAttr = targetType.GetCustomAttribute<CombinerAttribute>(false);
 			if (combinerAttr != null)
 			{
-				//UNDONE combinerAttr.CombinerType maybe generic
-				if (typeof(ICombiner<>).MakeGenericType(targetType).IsAssignableFrom(combinerAttr.CombinerType))
+				var combinerType = TryCreateCombinerFromGenericType(combinerAttr.CombinerType, targetType);
+				if (typeof(ICombiner<>).MakeGenericType(targetType).IsAssignableFrom(combinerType))
 				{
-					return CreateByCombinerInterfaceMI.MakeGenericMethod(combinerAttr.CombinerType, targetType).Invoke(null, new object[0]);
+					return CreateByCombinerInterfaceMI.MakeGenericMethod(combinerType, targetType).Invoke(null, new object[0]);
 				}
 			}
 
@@ -64,14 +64,53 @@ namespace NConfiguration.Combination
 				return CreateByCombinerInterfaceMI.MakeGenericMethod(combinerType, targetType).Invoke(null, new object[0]);
 			}
 
+			var supressValue = CreateDefaultSupressor(targetType);
+
+			return TryCreateForSimplyStruct(targetType, supressValue) ??
+				TryCreateRecursiveNullableCombiner(targetType, supressValue) ??
+				//UNDONE
+				CreateForwardCombiner(targetType, supressValue);
+		}
+
+		internal static object TryCreateForSimplyStruct(Type targetType, object supressValue)
+		{
 			if (IsSimplyStruct(targetType))
 			{
-				var supressValue = CreateDefaultSupressor(targetType);
 				return CreateForwardCombiner(targetType, supressValue);
 			}
+			else
+				return null;
+		}
 
-			//UNDONE
-			throw new NotImplementedException();
+		internal static object TryCreateRecursiveNullableCombiner(Type targetType, object supressValue)
+		{
+			var ntype = Nullable.GetUnderlyingType(targetType);
+			if (ntype == null) // is not Nullable<>
+				return null;
+
+			var funcType = typeof(Combine<>).MakeGenericType(targetType);
+
+			return Delegate.CreateDelegate(funcType, supressValue, RecursiveNullableCombineMI.MakeGenericMethod(ntype));
+		}
+
+		internal static readonly MethodInfo RecursiveNullableCombineMI = GetMethod("RecursiveNullableCombine");
+		internal static T? RecursiveNullableCombine<T>(Predicate<T?> supressValue, ICombiner combiner, T? x, T? y) where T : struct
+		{
+			if (supressValue(x)) return y;
+			if (supressValue(y)) return x;
+			return combiner.Combine<T>(x.Value, y.Value);
+		}
+
+		private static Type TryCreateCombinerFromGenericType(Type combinerType, Type targetType)
+		{
+			try
+			{
+				return combinerType.MakeGenericType(targetType);
+			}
+			catch(InvalidOperationException)
+			{
+				return combinerType;
+			}
 		}
 
 		internal static readonly MethodInfo CreateByCombinerInterfaceMI = GetMethod("CreateByCombinerInterface");
@@ -84,7 +123,6 @@ namespace NConfiguration.Combination
 		internal static object CreateForwardCombiner(Type type, object supressValue)
 		{
 			var funcType = typeof(Combine<>).MakeGenericType(type);
-
 
 			return Delegate.CreateDelegate(funcType, supressValue, ForwardCombineMI.MakeGenericMethod(type));
 		}

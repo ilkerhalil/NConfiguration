@@ -65,7 +65,7 @@ namespace NConfiguration.Combination
 				}
 
 				if (!assingExist)
-					return false;
+					return null;
 
 				_bodyList.Add(Expression.Return(returnTarget, _pPrev));
 				_bodyList.Add(Expression.Label(returnTarget, _pPrev));
