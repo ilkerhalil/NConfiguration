@@ -36,40 +36,50 @@ namespace NConfiguration.Combination
 
 		public static object CreateFunction(Type targetType)
 		{
-			var combinerAttr = targetType.GetCustomAttribute<CombinerAttribute>(false);
-			if (combinerAttr != null)
-			{
-				var combinerType = TryCreateCombinerFromGenericType(combinerAttr.CombinerType, targetType);
-				if (typeof(ICombiner<>).MakeGenericType(targetType).IsAssignableFrom(combinerType))
-				{
-					return CreateByCombinerInterfaceMI.MakeGenericMethod(combinerType, targetType).Invoke(null, new object[0]);
-				}
-			}
-
-			if(typeof(ICombinable<>).MakeGenericType(targetType).IsAssignableFrom(targetType))
-			{
-				var combinerType = (targetType.IsValueType ?
-					typeof(GenericStructCombiner<>) :
-					typeof(GenericClassCombiner<>)).MakeGenericType(targetType);
-
-				return CreateByCombinerInterfaceMI.MakeGenericMethod(combinerType, targetType).Invoke(null, new object[0]);
-			}
-
-			if (typeof(ICombinable).IsAssignableFrom(targetType))
-			{
-				var combinerType = (targetType.IsValueType ?
-					typeof(StructCombiner<>) :
-					typeof(ClassCombiner<>)).MakeGenericType(targetType);
-
-				return CreateByCombinerInterfaceMI.MakeGenericMethod(combinerType, targetType).Invoke(null, new object[0]);
-			}
-
 			var supressValue = CreateDefaultSupressor(targetType);
 
-			return TryCreateForSimplyStruct(targetType, supressValue) ??
+			return
+				TryCreateAsCombinable(targetType) ??
+				TryCreateAsAttribute(targetType) ??
+				TryCreateForSimplyStruct(targetType, supressValue) ??
 				TryCreateRecursiveNullableCombiner(targetType, supressValue) ??
-				//UNDONE
+				CreateComplexCombiner(targetType) ??
 				CreateForwardCombiner(targetType, supressValue);
+		}
+
+		private static object CreateComplexCombiner(Type targetType)
+		{
+			//UNDONE
+
+			return null;
+		}
+
+		internal static object TryCreateAsAttribute(Type targetType)
+		{
+			var combinerAttr = targetType.GetCustomAttributes(false).OfType<ICombinerFactory>().SingleOrDefault();
+			
+			if(combinerAttr == null)
+				return null;
+			
+			var combiner = combinerAttr.CreateInstance(targetType);
+			
+			var mi = typeof(ICombiner<>).MakeGenericType(targetType).GetMethod("Combine");
+			var funcType = typeof(Combine<>).MakeGenericType(targetType);
+			return Delegate.CreateDelegate(funcType, combiner, mi);
+		}
+
+		internal static object TryCreateAsCombinable(Type targetType)
+		{
+			Type combinerType;
+			if (typeof(ICombinable<>).MakeGenericType(targetType).IsAssignableFrom(targetType))
+				combinerType = targetType.IsValueType ? typeof(GenericStructCombiner<>) : typeof(GenericClassCombiner<>);
+			else if (typeof(ICombinable).IsAssignableFrom(targetType))
+				combinerType = targetType.IsValueType ? typeof(StructCombiner<>) : typeof(ClassCombiner<>);
+			else
+				return null;
+
+			combinerType = combinerType.MakeGenericType(targetType);
+			return CreateByCombinerInterfaceMI.MakeGenericMethod(combinerType, targetType).Invoke(null, new object[0]);
 		}
 
 		internal static object TryCreateForSimplyStruct(Type targetType, object supressValue)

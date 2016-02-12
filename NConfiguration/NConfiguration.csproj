@@ -56,6 +56,7 @@
     <Compile Include="Combination\ICombinable.cs" />
     <Compile Include="Combination\ICombiner.cs" />
     <Compile Include="Combination\ICombiner%271.cs" />
+    <Compile Include="Combination\ICombinerFactory.cs" />
     <Compile Include="ICombinableAppSettings.cs" />
     <Compile Include="DeserializeChildException.cs" />
     <Compile Include="Combination\CombineMapper.cs" />
