@@ -49,6 +49,8 @@
     <Compile Include="Combination\DefaultCombinationTests\ChildCombinerTests.cs" />
     <Compile Include="Combination\DefaultCombinationTests\AutoCombinerTests.cs" />
     <Compile Include="Combination\DefaultCombinationTests\CombinableTests.cs" />
+    <Compile Include="Combination\DefaultCombinationTests\JoinStringCombiner.cs" />
+    <Compile Include="Combination\DefaultCombinationTests\TestMemberAttrClass.cs" />
     <Compile Include="Combination\DefaultCombinationTests\TestComplexClassWithoutConstructor.cs" />
     <Compile Include="Combination\DefaultCombinationTests\TestComplexClass.cs" />
     <Compile Include="Combination\DefaultCombinationTests\TypeAttributeCombinerTests.cs" />

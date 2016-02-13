@@ -50,5 +50,33 @@ namespace NConfiguration.Tests.Combination.DefaultCombinationTests
 			Assert.That(combined.P1, Is.EqualTo("yP1"));
 			Assert.That(combined.P2, Is.EqualTo(1));
 		}
+
+
+		[Test]
+		public void TestMemberAttrClass()
+		{
+			var x = new TestMemberAttrClass()
+			{
+				F1 = "xF1",
+				F1A = "xF1A",
+				P1 = "xP1",
+				P1A = "xP1A"
+			};
+
+			var y = new TestMemberAttrClass()
+			{
+				F1 = "yF1",
+				F1A = "yF1A",
+				P1 = "yP1",
+				P1A = "yP1A"
+			};
+
+			var combined = DefaultCombiner.Instance.Combine(x, y);
+
+			Assert.That(combined.F1, Is.EqualTo("yF1"));
+			Assert.That(combined.F1A, Is.EqualTo("xF1A,yF1A"));
+			Assert.That(combined.P1, Is.EqualTo("yP1"));
+			Assert.That(combined.P1A, Is.EqualTo("xP1A,yP1A"));
+		}
 	}
 }

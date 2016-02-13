@@ -17,8 +17,8 @@ namespace NConfiguration.Combination
 			if (next == null) return prev;
 	
 			var result = new TestAttrClass();
-			result.F1 = combiner.Combine(prev.F1, next.F1);
-			result.F2 = combiner.Combine(prev.F2, next.F2);
+			result.F1 = combiner.Combine(combiner, prev.F1, next.F1);
+			result.F2 = combiner.Combine(combiner, prev.F2, next.F2);
 			return result;
 		}
 	*/
@@ -69,6 +69,22 @@ namespace NConfiguration.Combination
 			_bodyList.Add(Expression.Assign(_vResult, resultInstance));
 		}
 
+		private Expression CallMemberCombiner(MemberInfo mi, Type targetType, Expression prev, Expression next)
+		{
+			var combinerAttr = mi.GetCustomAttributes(false).OfType<ICombinerFactory>().SingleOrDefault();
+			if (combinerAttr == null)
+			{
+				var combineMI = typeof(ICombiner).GetMethod("Combine").MakeGenericMethod(targetType);
+				return Expression.Call(_pCombiner, combineMI, _pCombiner, prev, next);
+			}
+			else
+			{
+				var customCombiner = Expression.Constant(combinerAttr.CreateInstance(targetType));
+				var combineMI = typeof(ICombiner<>).MakeGenericType(targetType).GetMethod("Combine");
+				return Expression.Call(customCombiner, combineMI, _pCombiner, prev, next);
+			}
+		}
+
 		public void Add(FieldInfo fi)
 		{
 			if (fi.IsInitOnly)
@@ -83,14 +99,10 @@ namespace NConfiguration.Combination
 			if (fi.GetCustomAttribute<IgnoreDataMemberAttribute>() != null)
 				return;
 
-			var mi = typeof(ICombiner).GetMethod("Combine").MakeGenericMethod(fi.FieldType);
-
 			var prevField = Expression.Field(_pPrev, fi);
 			var nextField = Expression.Field(_pNext, fi);
 			var resultField = Expression.Field(_vResult, fi);
-
-			//UNDONE check custom attributes
-			var right = Expression.Call(_pCombiner, mi, _pCombiner, prevField, nextField);
+			var right = CallMemberCombiner(fi, fi.FieldType, prevField, nextField);
 
 			_bodyList.Add(Expression.Assign(resultField, right));
 			_assingExist = true;
@@ -110,14 +122,11 @@ namespace NConfiguration.Combination
 			if (pi.GetCustomAttribute<IgnoreDataMemberAttribute>() != null)
 				return;
 
-			var mi = typeof(ICombiner).GetMethod("Combine").MakeGenericMethod(pi.PropertyType);
-
 			var prevField = Expression.Property(_pPrev, pi);
 			var nextField = Expression.Property(_pNext, pi);
 			var resultField = Expression.Property(_vResult, pi);
 
-			//UNDONE check custom attributes
-			var right = Expression.Call(_pCombiner, mi, _pCombiner, prevField, nextField);
+			var right = CallMemberCombiner(pi, pi.PropertyType, prevField, nextField);
 
 			_bodyList.Add(Expression.Assign(resultField, right));
 			_assingExist = true;
@@ -131,7 +140,8 @@ namespace NConfiguration.Combination
 			_bodyList.Add(Expression.Return(_lbReturn, _vResult));
 			_bodyList.Add(Expression.Label(_lbReturn, _vResult));
 
-			return Expression.Lambda(_delegateType, Expression.Block(new []{ _vResult }, _bodyList), _pCombiner, _pPrev, _pNext).Compile();
+			var lambdaEx = Expression.Lambda(_delegateType, Expression.Block(new []{ _vResult }, _bodyList), _pCombiner, _pPrev, _pNext);
+			return lambdaEx.Compile();
 		}
 	}
 }
