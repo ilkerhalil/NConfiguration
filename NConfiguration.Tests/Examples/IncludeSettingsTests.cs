@@ -10,6 +10,7 @@ using NConfiguration.Examples;
 using NConfiguration.Xml.Protected;
 using NConfiguration.GenericView;
 using NConfiguration.Json;
+using NConfiguration.Combination;
 
 namespace NConfiguration.Examples
 {
@@ -32,7 +33,7 @@ namespace NConfiguration.Examples
 
 			IAppSettings settings = loader.Settings;
 
-			var addCfg = settings.TryCombine<ExampleCombineConfig>("AdditionalConfig");
+			var addCfg = settings.TryCombine<ExampleCombineConfig>("AdditionalConfig", DefaultCombiner.Instance);
 
 			Assert.IsNotNull(addCfg);
 			Assert.AreEqual("InAppDirectory", addCfg.F);
@@ -54,7 +55,7 @@ namespace NConfiguration.Examples
 
 			IAppSettings settings = loader.Settings;
 
-			var addCfg = settings.TryCombine<ExampleCombineConfig>("AdditionalConfig");
+			var addCfg = settings.TryCombine<ExampleCombineConfig>("AdditionalConfig", DefaultCombiner.Instance);
 
 			Assert.IsNotNull(addCfg);
 			Assert.AreEqual("InAppDirectory_json", addCfg.F);
@@ -73,7 +74,7 @@ namespace NConfiguration.Examples
 
 			loader.LoadSettings(xmlFileLoader.LoadFile("Examples/AppDirectory/autoMain.config"));
 
-			var settings = new CombinableAppSettings(loader.Settings, Global.GenericCombiner);
+			var settings = new CombinableAppSettings(loader.Settings);
 
 			var cfg = settings.TryGet<ChildAutoCombinableConnectionConfig>();
 
@@ -103,7 +104,7 @@ namespace NConfiguration.Examples
 
 			IAppSettings settings = loader.Settings;
 
-			var addCfg = settings.TryCombine<ExampleCombineConfig>("AdditionalConfig");
+			var addCfg = settings.TryCombine<ExampleCombineConfig>("AdditionalConfig", DefaultCombiner.Instance);
 
 			Assert.IsNotNull(addCfg);
 			Assert.AreEqual("InUpDirectory", addCfg.F);

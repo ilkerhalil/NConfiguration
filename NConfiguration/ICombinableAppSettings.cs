@@ -26,12 +26,5 @@ namespace NConfiguration
 		/// <param name='sectionName'>Section name.</param>
 		/// <typeparam name='T'>type of configuration</typeparam>
 		T TryGet<T>(string sectionName);
-
-		/// <summary>
-		/// Set custom combiner
-		/// </summary>
-		/// <typeparam name="T">required type</typeparam>
-		/// <param name="combiner">combine function</param>
-		void SetCombiner<T>(Func<T, T, T> combiner);
 	}
 }

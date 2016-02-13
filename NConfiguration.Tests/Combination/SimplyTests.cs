@@ -11,15 +11,13 @@ namespace NConfiguration.Combination
 	[TestFixture]
 	public class SimplyTests
 	{
-		private static IGenericCombiner _combiner = new GenericCombiner(new CombineMapper());
-
 		[TestCase(0, 0, 0)]
 		[TestCase(0, 5, 5)]
 		[TestCase(5, 0, 5)]
 		[TestCase(5, 8, 8)]
 		public void CombineInt(int x, int y, int res)
 		{
-			Assert.That(_combiner.Combine(x, y), Is.EqualTo(res));
+			Assert.That(DefaultCombiner.Instance.Combine(x, y), Is.EqualTo(res));
 		}
 
 		[TestCase("A", "B", "B")]
@@ -28,7 +26,7 @@ namespace NConfiguration.Combination
 		[TestCase(null, null, null)]
 		public void CombineString(string x, string y, string res)
 		{
-			Assert.That(_combiner.Combine(x, y), Is.EqualTo(res));
+			Assert.That(DefaultCombiner.Instance.Combine(x, y), Is.EqualTo(res));
 		}
 
 		[TestCase(0, 0, 0)]
@@ -40,7 +38,7 @@ namespace NConfiguration.Combination
 		[TestCase(null, null, null)]
 		public void CombineNInt(int? x, int? y, int? res)
 		{
-			Assert.That(_combiner.Combine(x, y), Is.EqualTo(res));
+			Assert.That(DefaultCombiner.Instance.Combine(x, y), Is.EqualTo(res));
 		}
 
 		[TestCase("A,B", "B", "B")]
@@ -52,7 +50,7 @@ namespace NConfiguration.Combination
 			var xColl = x.Split(',').Where(s => !string.IsNullOrEmpty(s)).ToArray();
 			var yColl = y.Split(',').Where(s => !string.IsNullOrEmpty(s)).ToArray();
 
-			var combine = string.Join(",", _combiner.Combine(xColl, yColl));
+			var combine = string.Join(",", DefaultCombiner.Instance.Combine(xColl, yColl));
 
 			Assert.That(combine, Is.EqualTo(res));
 		}

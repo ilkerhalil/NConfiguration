@@ -11,8 +11,6 @@ namespace NConfiguration.Combination
 	[TestFixture]
 	public class ComplexTests
 	{
-		private static IGenericCombiner _combiner = new GenericCombiner(new CombineMapper());
-
 		[Test]
 		public void CombineStruct()
 		{
@@ -26,7 +24,7 @@ namespace NConfiguration.Combination
 				PString = "next", FString1 = "next", FString2 = null, FInt = 0, NInt = null
 			};
 
-			var result = _combiner.Combine(prev, next);
+			var result = DefaultCombiner.Instance.Combine(prev, next);
 			
 			Assert.That(result.PString, Is.EqualTo("next"));
 			Assert.That(result.FString1, Is.EqualTo("next"));
@@ -60,7 +58,7 @@ namespace NConfiguration.Combination
 				Array2 = new int[]{3, 3, 3}
 			};
 
-			var result = _combiner.Combine(prev, next);
+			var result = DefaultCombiner.Instance.Combine(prev, next);
 
 			Assert.That(result.PString, Is.EqualTo("next"));
 			Assert.That(result.FString1, Is.EqualTo("next"));
@@ -78,21 +76,18 @@ namespace NConfiguration.Combination
 			{
 				PString = null,
 				FString1 = null,
-				FString2 = null,
 			};
 
 			var next = new TestAttrClass()
 			{
 				PString = "next",
 				FString1 = "next",
-				FString2 = "next",
 			};
 
-			var result = _combiner.Combine(prev, next);
+			var result = DefaultCombiner.Instance.Combine(prev, next);
 
 			Assert.That(result.PString, Is.EqualTo("next"));
 			Assert.That(result.FString1, Is.EqualTo(null));
-			Assert.That(result.FString2, Is.EqualTo(null));
 		}
 
 		[TestCase(true, false, true)]
@@ -114,7 +109,7 @@ namespace NConfiguration.Combination
 			if (!nextExist)
 				next = null;
 
-			var result = _combiner.Combine(prev, next);
+			var result = DefaultCombiner.Instance.Combine(prev, next);
 
 			if(resultExist)
 			{
@@ -143,7 +138,7 @@ namespace NConfiguration.Combination
 				ClassField = y == null ? null : (new CombinableTestClass() { Text = y })
 			};
 
-			var field = _combiner.Combine(prev, next).ClassField;
+			var field = DefaultCombiner.Instance.Combine(prev, next).ClassField;
 			var test = field == null ? null : field.Text;
 
 			Assert.That(test, Is.EqualTo(res));
@@ -165,7 +160,7 @@ namespace NConfiguration.Combination
 				StructField = new CombinableTestStruct() { Text = y }
 			};
 
-			var test = _combiner.Combine(prev, next).StructField.Text;
+			var test = DefaultCombiner.Instance.Combine(prev, next).StructField.Text;
 
 			Assert.That(test, Is.EqualTo(res));
 		}

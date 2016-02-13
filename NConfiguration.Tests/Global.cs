@@ -12,7 +12,5 @@ namespace NConfiguration.Tests
 		public static readonly IStringConverter PlainConverter = new StringConverter();
 
 		public static readonly IGenericDeserializer GenericDeserializer = new GenericDeserializer();
-
-		public static readonly GenericCombiner GenericCombiner = new GenericCombiner(new CombineMapper());
 	}
 }

@@ -2,10 +2,11 @@ using System;
 using System.Text;
 using System.Xml.Serialization;
 using System.Collections.Generic;
+using NConfiguration.Combination;
 
 namespace NConfiguration.Examples
 {
-	public class ConnectionConfig : ICombinable_obsolete
+	public class ConnectionConfig : ICombinable, ICombinable<ConnectionConfig>
 	{
 		[XmlAttribute("Server")]
 		public string Server { get; set; }
@@ -47,7 +48,7 @@ namespace NConfiguration.Examples
 			sb.AppendFormat("{0}={1};", name, value);
 		}
 
-		public void Combine(ConnectionConfig other)
+		public void Combine(ICombiner combiner, ConnectionConfig other)
 		{
 			if (other == null)
 				return;
@@ -58,10 +59,10 @@ namespace NConfiguration.Examples
 			Password = other.Password ?? Password;
 			Additional = other.Additional ?? Additional;
 		}
-		
-		public virtual void Combine(object other)
+
+		public virtual void Combine(ICombiner combiner, object other)
 		{
-			Combine(other as ConnectionConfig);
+			Combine(combiner, other as ConnectionConfig);
 		}
 	}
 }

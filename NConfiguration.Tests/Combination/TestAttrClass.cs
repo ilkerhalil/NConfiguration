@@ -9,9 +9,6 @@ namespace NConfiguration.Combination
 		[IgnoreDataMember]
 		public string FString1;
 		
-		[XmlIgnore]
-		public string FString2;
-		
 		public string PString { get; set;}
 	}
 }

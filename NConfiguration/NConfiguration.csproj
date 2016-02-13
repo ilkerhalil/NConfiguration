@@ -45,13 +45,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Combination\BuildToolkit.cs" />
     <Compile Include="CombinableAppSettings.cs" />
     <Compile Include="CombinableAppSettingExtensions.cs" />
     <Compile Include="Combination\BuildUtils.cs" />
     <Compile Include="Combination\CombinerAttribute.cs" />
     <Compile Include="Combination\BuildUtils.Combiners.cs" />
-    <Compile Include="Combination\ComplexFunctionBuilder2.cs" />
+    <Compile Include="Combination\ComplexFunctionBuilder.cs" />
     <Compile Include="Combination\DefaultCombiner.cs" />
     <Compile Include="Combination\ChildCombiner.cs" />
     <Compile Include="Combination\ICombinable%271.cs" />
@@ -62,10 +61,6 @@
     <Compile Include="Combination\ICombinerFactory.cs" />
     <Compile Include="ICombinableAppSettings.cs" />
     <Compile Include="DeserializeChildException.cs" />
-    <Compile Include="Combination\CombineMapper.cs" />
-    <Compile Include="Combination\ICombineMapper.cs" />
-    <Compile Include="Combination\IGenericCombiner.cs" />
-    <Compile Include="Combination\GenericCombiner.cs" />
     <Compile Include="GenericView\Deserialization\FieldFunctionInfo.cs" />
     <Compile Include="IChangeable.cs" />
     <Compile Include="Joining\FindingSettingsArgs.cs" />
@@ -131,7 +126,6 @@
     <Compile Include="Joining\FileSearcher.cs" />
     <Compile Include="Xml\XmlFileSettings.cs" />
     <Compile Include="Xml\Protected\IXmlEncryptable.cs" />
-    <Compile Include="ICombinable_obsolete.cs" />
     <Compile Include="Xml\Protected\ConfigProtectedData.cs" />
     <Compile Include="Joining\LoadedEventArgs.cs" />
     <Compile Include="Xml\XmlFileSettingsLoader.cs" />
@@ -150,7 +144,6 @@
     <Compile Include="Joining\IncludeMode.cs" />
     <Compile Include="Xml\XmlSettings.cs" />
     <Compile Include="Xml\Protected\IProviderCollection.cs" />
-    <Compile Include="Combination\ComplexFunctionBuilder.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

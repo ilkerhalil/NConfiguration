@@ -34,6 +34,19 @@ namespace NConfiguration.Combination
 			return _simplySystemStructs.Contains(type);
 		}
 
+		private static Type GetEnumerableType(Type type)
+		{
+			foreach (Type intType in type.GetInterfaces())
+			{
+				if (intType.IsGenericType
+					&& intType.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+				{
+					return intType.GetGenericArguments()[0];
+				}
+			}
+			return null;
+		}
+
 		public static object CreateFunction(Type targetType)
 		{
 			var supressValue = CreateDefaultSupressor(targetType);
@@ -43,13 +56,25 @@ namespace NConfiguration.Combination
 				TryCreateAsAttribute(targetType) ??
 				TryCreateForSimplyStruct(targetType, supressValue) ??
 				TryCreateRecursiveNullableCombiner(targetType, supressValue) ??
-				CreateComplexCombiner(targetType) ??
+				TryCreateCollectionCombiner(targetType) ??
+				TryCreateComplexCombiner(targetType) ??
 				CreateForwardCombiner(targetType, supressValue);
 		}
 
-		private static object CreateComplexCombiner(Type targetType)
+		private static object TryCreateCollectionCombiner(Type targetType)
 		{
-			var builder = new ComplexFunctionBuilder2(targetType);
+			var itemType = GetEnumerableType(targetType);
+			if (itemType == null)
+				return null;
+
+			var funcType = typeof(Combine<>).MakeGenericType(targetType);
+
+			return Delegate.CreateDelegate(funcType, CollectionCombineMI.MakeGenericMethod(targetType, itemType));
+		}
+
+		private static object TryCreateComplexCombiner(Type targetType)
+		{
+			var builder = new ComplexFunctionBuilder(targetType);
 
 			foreach (var fi in targetType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public))
 				builder.Add(fi);
@@ -107,6 +132,24 @@ namespace NConfiguration.Combination
 			var funcType = typeof(Combine<>).MakeGenericType(targetType);
 
 			return Delegate.CreateDelegate(funcType, supressValue, RecursiveNullableCombineMI.MakeGenericMethod(ntype));
+		}
+
+		internal static readonly MethodInfo CollectionCombineMI = GetMethod("CollectionCombine");
+		internal static T CollectionCombine<T, I>(ICombiner combiner, T x, T y) where T: IEnumerable<I>
+		{
+			if (x == null)
+				return y;
+
+			if (y == null)
+				return x;
+
+			if (!x.Any())
+				return y;
+
+			if (!y.Any())
+				return x;
+
+			return y;
 		}
 
 		internal static readonly MethodInfo RecursiveNullableCombineMI = GetMethod("RecursiveNullableCombine");

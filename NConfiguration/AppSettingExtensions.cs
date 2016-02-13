@@ -4,6 +4,7 @@ using System.Xml.Serialization;
 using System.Runtime.Serialization;
 using NConfiguration.Monitoring;
 using System.Collections.Generic;
+using NConfiguration.Combination;
 
 namespace NConfiguration
 {
@@ -158,10 +159,11 @@ namespace NConfiguration
 		/// </summary>
 		/// <typeparam name="T">type of instance of configuration</typeparam>
 		/// <param name="settings">instance of application settings</param>
+		/// <param name="combiner">combiner</param>
 		/// <returns>Instance of configuration or null.</returns>
-		public static T TryCombine<T>(this IAppSettings settings) where T : class, ICombinable_obsolete
+		public static T TryCombine<T>(this IAppSettings settings, ICombiner combiner)
 		{
-			return TryCombine<T>(settings, GetSectionName<T>());
+			return TryCombine<T>(settings, GetSectionName<T>(), combiner);
 		}
 
 		/// <summary>
@@ -170,17 +172,13 @@ namespace NConfiguration
 		/// <typeparam name="T">type of instance of configuration</typeparam>
 		/// <param name="settings">instance of application settings</param>
 		/// <param name="sectionName">section name</param>
+		/// <param name="combiner">combiner</param>
 		/// <returns>Instance of configuration or null.</returns>
-		public static T TryCombine<T>(this IAppSettings settings, string sectionName) where T : class, ICombinable_obsolete
+		public static T TryCombine<T>(this IAppSettings settings, string sectionName, ICombiner combiner)
 		{
-			T sum = null;
-			foreach(var cfg in settings.LoadCollection<T>(sectionName))
-			{
-				if(sum == null)
-					sum = cfg;
-				else
-					sum.Combine(cfg);
-			}
+			T sum = default(T);
+			foreach (var cfg in settings.LoadCollection<T>(sectionName))
+				sum = combiner.Combine<T>(sum, cfg);
 
 			return sum;
 		}
@@ -190,9 +188,10 @@ namespace NConfiguration
 		/// </summary>
 		/// <typeparam name="T">type of instance of configuration</typeparam>
 		/// <param name="settings">instance of application settings</param>
-		public static T Combine<T>(this IAppSettings settings) where T : class, ICombinable_obsolete
+		/// <param name="combiner">combiner</param>
+		public static T Combine<T>(this IAppSettings settings, ICombiner combiner)
 		{
-			return Combine<T>(settings, GetSectionName<T>());
+			return Combine<T>(settings, GetSectionName<T>(), combiner);
 		}
 
 		/// <summary>
@@ -201,18 +200,18 @@ namespace NConfiguration
 		/// <typeparam name="T">type of instance of configuration</typeparam>
 		/// <param name="settings">instance of application settings</param>
 		/// <param name="sectionName">section name</param>
-		public static T Combine<T>(this IAppSettings settings, string sectionName) where T : class, ICombinable_obsolete
+		/// <param name="combiner">combiner</param>
+		public static T Combine<T>(this IAppSettings settings, string sectionName, ICombiner combiner)
 		{
-			T sum = null;
+			bool sectionNotFound = true;
+			T sum = default(T);
 			foreach (var cfg in settings.LoadCollection<T>(sectionName))
 			{
-				if (sum == null)
-					sum = cfg;
-				else
-					sum.Combine(cfg);
+				sectionNotFound = false;
+				sum = combiner.Combine<T>(sum, cfg);
 			}
 
-			if (sum == null)
+			if (sectionNotFound)
 				throw new SectionNotFoundException(sectionName, typeof(T));
 
 			return sum;

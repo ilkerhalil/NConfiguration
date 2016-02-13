@@ -1,6 +1,7 @@
 using System;
 using NUnit.Framework;
 using NConfiguration.Joining;
+using NConfiguration.Combination;
 namespace NConfiguration
 {
 	[TestFixture]
@@ -15,7 +16,7 @@ namespace NConfiguration
 			s.Add(GetXmlSettings("ACfg"));
 
 
-			var cfg = s.Combine<CombineConfig>("ACfg");
+			var cfg = s.Combine<CombineConfig>("ACfg", DefaultCombiner.Instance);
 			Assert.AreEqual("A", cfg.F);
 		}
 		
@@ -92,7 +93,7 @@ namespace NConfiguration
 			foreach(var name in confFiles)
 				s.Add(GetXmlSettings(name));
 
-			var cfg = s.Combine<CombineConfig>("ACfg");
+			var cfg = s.Combine<CombineConfig>("ACfg", DefaultCombiner.Instance);
 			Assert.AreEqual(expected, cfg.F);
 		}
 
@@ -104,7 +105,7 @@ namespace NConfiguration
 			for(int i =0; i<3 ; i++)
 				s.Add(GetXmlSettings("Empty"));
 
-			var cfg = s.TryCombine<CombineConfig>("ACfg");
+			var cfg = s.TryCombine<CombineConfig>("ACfg", DefaultCombiner.Instance);
 			Assert.IsNull(cfg);
 		}
 	}

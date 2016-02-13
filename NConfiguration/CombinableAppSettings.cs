@@ -11,14 +11,14 @@ namespace NConfiguration
 	public class CombinableAppSettings : ICombinableAppSettings
 	{
 		public IAppSettings Settings { get; private set; }
-		public GenericCombiner Combiner { get; private set; }
+		public ICombiner Combiner { get; private set; }
 
 		public CombinableAppSettings(IAppSettings settings)
-			: this(settings, new GenericCombiner(new CombineMapper()))
+			: this(settings, DefaultCombiner.Instance)
 		{
 		}
 
-		public CombinableAppSettings(IAppSettings settings, GenericCombiner combiner)
+		public CombinableAppSettings(IAppSettings settings, ICombiner combiner)
 		{
 			Settings = settings;
 			Combiner = combiner;
@@ -52,11 +52,6 @@ namespace NConfiguration
 				sum = Combiner.Combine<T>(sum, cfgs.Current);
 
 			return sum;
-		}
-
-		public void SetCombiner<T>(System.Func<T, T, T> combiner)
-		{
-			Combiner.SetCombiner<T>(combiner);
 		}
 	}
 }

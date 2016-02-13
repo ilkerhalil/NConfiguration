@@ -2,11 +2,11 @@ using System;
 
 namespace NConfiguration.Combination
 {
-	public struct CombinableTestStruct: ICombinable_obsolete
+	public struct CombinableTestStruct: ICombinable
 	{
 		public string Text;
 
-		public void Combine(object other)
+		public void Combine(ICombiner combiner, object other)
 		{
 			if (other == null)
 				return;
@@ -15,8 +15,6 @@ namespace NConfiguration.Combination
 
 			if (otherText != null)
 				Text = otherText + Text;
-
-			
 		}
 	}
 }
