@@ -22,9 +22,9 @@ namespace NConfiguration.Combination
 		{
 		}
 
-		public T Combine<T>(T x, T y)
+		public T Combine<T>(ICombiner context, T x, T y)
 		{
-			return Cache<T>.CombineLazy.Value(this, x, y);
+			return Cache<T>.CombineLazy.Value(context, x, y);
 		}
 
 		private static class Cache<T>

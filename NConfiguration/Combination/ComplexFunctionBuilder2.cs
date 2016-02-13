@@ -90,7 +90,7 @@ namespace NConfiguration.Combination
 			var resultField = Expression.Field(_vResult, fi);
 
 			//UNDONE check custom attributes
-			var right = Expression.Call(_pCombiner, mi, prevField, nextField);
+			var right = Expression.Call(_pCombiner, mi, _pCombiner, prevField, nextField);
 
 			_bodyList.Add(Expression.Assign(resultField, right));
 			_assingExist = true;
@@ -117,7 +117,7 @@ namespace NConfiguration.Combination
 			var resultField = Expression.Property(_vResult, pi);
 
 			//UNDONE check custom attributes
-			var right = Expression.Call(_pCombiner, mi, prevField, nextField);
+			var right = Expression.Call(_pCombiner, mi, _pCombiner, prevField, nextField);
 
 			_bodyList.Add(Expression.Assign(resultField, right));
 			_assingExist = true;

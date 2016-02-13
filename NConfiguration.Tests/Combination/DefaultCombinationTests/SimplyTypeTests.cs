@@ -15,7 +15,7 @@ namespace NConfiguration.Tests.Combination.DefaultCombinationTests
 		{
 			var combined = typeof (ICombiner).GetMethod("Combine")
 				.MakeGenericMethod(t)
-				.Invoke(DefaultCombiner.Instance, new[] {x, y});
+				.Invoke(DefaultCombiner.Instance, new[] {DefaultCombiner.Instance, x, y });
 
 			Assert.That(combined, Is.EqualTo(result));
 		}

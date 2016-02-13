@@ -53,8 +53,10 @@
     <Compile Include="Combination\BuildUtils.Combiners.cs" />
     <Compile Include="Combination\ComplexFunctionBuilder2.cs" />
     <Compile Include="Combination\DefaultCombiner.cs" />
+    <Compile Include="Combination\ChildCombiner.cs" />
     <Compile Include="Combination\ICombinable%271.cs" />
     <Compile Include="Combination\ICombinable.cs" />
+    <Compile Include="Combination\CombinerExtensions.cs" />
     <Compile Include="Combination\ICombiner.cs" />
     <Compile Include="Combination\ICombiner%271.cs" />
     <Compile Include="Combination\ICombinerFactory.cs" />
