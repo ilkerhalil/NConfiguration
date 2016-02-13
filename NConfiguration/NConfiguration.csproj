@@ -51,6 +51,7 @@
     <Compile Include="Combination\BuildUtils.cs" />
     <Compile Include="Combination\CombinerAttribute.cs" />
     <Compile Include="Combination\BuildUtils.Combiners.cs" />
+    <Compile Include="Combination\ComplexFunctionBuilder2.cs" />
     <Compile Include="Combination\DefaultCombiner.cs" />
     <Compile Include="Combination\ICombinable%271.cs" />
     <Compile Include="Combination\ICombinable.cs" />

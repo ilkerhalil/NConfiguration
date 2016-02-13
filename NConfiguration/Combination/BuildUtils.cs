@@ -49,9 +49,15 @@ namespace NConfiguration.Combination
 
 		private static object CreateComplexCombiner(Type targetType)
 		{
-			//UNDONE
+			var builder = new ComplexFunctionBuilder2(targetType);
 
-			return null;
+			foreach (var fi in targetType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public))
+				builder.Add(fi);
+
+			foreach (var pi in targetType.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public))
+				builder.Add(pi);
+
+			return builder.Compile();
 		}
 
 		internal static object TryCreateAsAttribute(Type targetType)
@@ -109,18 +115,6 @@ namespace NConfiguration.Combination
 			if (supressValue(x)) return y;
 			if (supressValue(y)) return x;
 			return combiner.Combine<T>(x.Value, y.Value);
-		}
-
-		private static Type TryCreateCombinerFromGenericType(Type combinerType, Type targetType)
-		{
-			try
-			{
-				return combinerType.MakeGenericType(targetType);
-			}
-			catch(InvalidOperationException)
-			{
-				return combinerType;
-			}
 		}
 
 		internal static readonly MethodInfo CreateByCombinerInterfaceMI = GetMethod("CreateByCombinerInterface");

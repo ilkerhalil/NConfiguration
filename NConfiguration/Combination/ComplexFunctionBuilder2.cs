@@ -1,0 +1,137 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Linq.Expressions;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Xml.Serialization;
+
+namespace NConfiguration.Combination
+{
+	/*
+		//example of builded code
+		public TestAttrClass Combine(ICombiner combiner, TestAttrClass prev, TestAttrClass next)
+		{
+			if (prev == null) return next;
+			if (next == null) return prev;
+	
+			var result = new TestAttrClass();
+			result.F1 = combiner.Combine(prev.F1, next.F1);
+			result.F2 = combiner.Combine(prev.F2, next.F2);
+			return result;
+		}
+	*/
+
+	public class ComplexFunctionBuilder2
+	{
+		private Type _targetType;
+		private Type _delegateType;
+
+		private List<Expression> _bodyList = new List<Expression>();
+		private ParameterExpression _pCombiner;
+		private ParameterExpression _pPrev;
+		private ParameterExpression _pNext;
+		private ParameterExpression _vResult;
+
+		private LabelTarget _lbReturn;
+		private bool _assingExist = false;
+
+		public ComplexFunctionBuilder2(Type targetType)
+		{
+			_targetType = targetType;
+			_delegateType = typeof(Combine<>).MakeGenericType(_targetType);
+
+			_pCombiner = Expression.Parameter(typeof(ICombiner));
+			_pPrev = Expression.Parameter(_targetType);
+			_pNext = Expression.Parameter(_targetType);
+			_vResult = Expression.Variable(_targetType);
+
+			_lbReturn = Expression.Label(_targetType);
+
+			if (!_targetType.IsValueType)
+			{
+				_bodyList.Add(Expression.IfThen(Expression.Equal(_pNext, Expression.Constant(null)), Expression.Return(_lbReturn, _pPrev)));
+				_bodyList.Add(Expression.IfThen(Expression.Equal(_pPrev, Expression.Constant(null)), Expression.Return(_lbReturn, _pNext)));
+			}
+
+			var ci = _targetType.GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).FirstOrDefault(_ => _.GetParameters().Length == 0);
+			Expression resultInstance;
+
+			if (ci == null)
+			{
+				resultInstance = Expression.Call(typeof(FormatterServices).GetMethod("GetUninitializedObject"), Expression.Constant(_targetType));
+				resultInstance = Expression.Convert(resultInstance, _targetType);
+			}
+			else
+				resultInstance = Expression.New(ci);
+
+			_bodyList.Add(Expression.Assign(_vResult, resultInstance));
+		}
+
+		public void Add(FieldInfo fi)
+		{
+			if (fi.IsInitOnly)
+				return;
+
+			if(fi.IsPrivate)
+			{ // require DataMemberAttribute
+				if (fi.GetCustomAttribute<DataMemberAttribute>() == null)
+					return;
+			}
+
+			if (fi.GetCustomAttribute<IgnoreDataMemberAttribute>() != null)
+				return;
+
+			var mi = typeof(ICombiner).GetMethod("Combine").MakeGenericMethod(fi.FieldType);
+
+			var prevField = Expression.Field(_pPrev, fi);
+			var nextField = Expression.Field(_pNext, fi);
+			var resultField = Expression.Field(_vResult, fi);
+
+			//UNDONE check custom attributes
+			var right = Expression.Call(_pCombiner, mi, prevField, nextField);
+
+			_bodyList.Add(Expression.Assign(resultField, right));
+			_assingExist = true;
+		}
+
+		public void Add(PropertyInfo pi)
+		{
+			if (!pi.CanWrite || !pi.CanRead)
+				return;
+
+			if(pi.SetMethod.IsPrivate && pi.GetMethod.IsPrivate)
+			{ // require DataMemberAttribute
+				if (pi.GetCustomAttribute<DataMemberAttribute>() == null)
+					return;
+			}
+
+			if (pi.GetCustomAttribute<IgnoreDataMemberAttribute>() != null)
+				return;
+
+			var mi = typeof(ICombiner).GetMethod("Combine").MakeGenericMethod(pi.PropertyType);
+
+			var prevField = Expression.Property(_pPrev, pi);
+			var nextField = Expression.Property(_pNext, pi);
+			var resultField = Expression.Property(_vResult, pi);
+
+			//UNDONE check custom attributes
+			var right = Expression.Call(_pCombiner, mi, prevField, nextField);
+
+			_bodyList.Add(Expression.Assign(resultField, right));
+			_assingExist = true;
+		}
+
+		public object Compile()
+		{
+			if (!_assingExist)
+				return null;
+
+			_bodyList.Add(Expression.Return(_lbReturn, _vResult));
+			_bodyList.Add(Expression.Label(_lbReturn, _vResult));
+
+			return Expression.Lambda(_delegateType, Expression.Block(new []{ _vResult }, _bodyList), _pCombiner, _pPrev, _pNext).Compile();
+		}
+	}
+}
