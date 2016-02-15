@@ -26,43 +26,14 @@ namespace NConfiguration.Json
 			_obj = obj;
 		}
 
-		/// <summary>
-		/// Returns the first child node with the specified name or null if no match is found.
-		/// </summary>
-		/// <param name="name">node name is not case-sensitive.</param>
-		/// <returns>Returns the first child node with the specified name or null if no match is found.</returns>
-		public ICfgNode GetChild(string name)
+		public IEnumerable<KeyValuePair<string, ICfgNode>> Nested
 		{
-			var val = _obj.Properties
-				.Where(p => NameComparer.Equals(p.Key, name))
-				.Select(p => p.Value)
-				.FirstOrDefault();
-			if (val == null)
-				return null;
-
-			return CreateByJsonValue(_converter, FlatArray(val).FirstOrDefault());
-		}
-
-		/// <summary>
-		/// Returns the collection of child nodes with the specified name or empty if no match is found.
-		/// </summary>
-		/// <param name="name">node name is not case-sensitive.</param>
-		/// <returns>Returns the collection of child nodes with the specified name or empty if no match is found.</returns>
-		public IEnumerable<ICfgNode> GetCollection(string name)
-		{
-			return _obj.Properties.Where(p => NameComparer.Equals(p.Key, name))
-				.SelectMany(p => FlatArray(p.Value))
-				.Select(p => CreateByJsonValue(_converter, p));
-		}
-
-		/// <summary>
-		/// Gets all the child nodes with their names.
-		/// </summary>
-		public IEnumerable<KeyValuePair<string, ICfgNode>> GetNodes()
-		{
-			foreach (var el in _obj.Properties)
-				foreach (var val in FlatArray(el.Value))
-					yield return new KeyValuePair<string, ICfgNode>(el.Key, CreateByJsonValue(_converter, val));
+			get
+			{
+				foreach (var el in _obj.Properties)
+					foreach (var val in FlatArray(el.Value))
+						yield return new KeyValuePair<string, ICfgNode>(el.Key, CreateByJsonValue(_converter, val));
+			}
 		}
 
 		/// <summary>

@@ -73,7 +73,7 @@ namespace NConfiguration.Joining
 			if(includeRoot == null)
 				return;
 
-			foreach (var incNode in includeRoot.GetNodes())
+			foreach (var incNode in includeRoot.Nested)
 			{
 				if (NameComparer.Equals(incNode.Key, "FinalSearch"))
 					continue;

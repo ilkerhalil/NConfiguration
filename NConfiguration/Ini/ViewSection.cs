@@ -27,34 +27,6 @@ namespace NConfiguration.Ini
 		}
 
 		/// <summary>
-		/// Returns the first child node with the specified name or null if no match is found.
-		/// </summary>
-		/// <param name="name">node name is not case-sensitive</param>
-		/// <returns>Returns the first child node with the specified name or null if no match is found.</returns>
-		public ICfgNode GetChild(string name)
-		{
-			var value = _pairs
-				.Where(p => NameComparer.Equals(p.Key, name))
-				.Select(p => p.Value)
-				.FirstOrDefault();
-			if(value != null)
-				return new ViewPlainField(_converter, value);
-
-			return null;
-		}
-
-		/// <summary>
-		/// Returns the collection of child nodes with the specified name or empty if no match is found.
-		/// </summary>
-		/// <param name="name">node name is not case-sensitive.</param>
-		/// <returns>Returns the collection of child nodes with the specified name or empty if no match is found.</returns>
-		public IEnumerable<ICfgNode> GetCollection(string name)
-		{
-			foreach (var value in _pairs.Where(p => NameComparer.Equals(p.Key, name)).Select(p => p.Value))
-				yield return new ViewPlainField(_converter, value);
-		}
-
-		/// <summary>
 		/// Throw NotSupportedException.
 		/// </summary>
 		public T As<T>()
@@ -65,10 +37,13 @@ namespace NConfiguration.Ini
 		/// <summary>
 		/// Gets all the child nodes with their names.
 		/// </summary>
-		public IEnumerable<KeyValuePair<string, ICfgNode>> GetNodes()
+		public IEnumerable<KeyValuePair<string, ICfgNode>> Nested
 		{
-			foreach (var pair in _pairs)
-				yield return new KeyValuePair<string, ICfgNode>(pair.Key, new ViewPlainField(_converter, pair.Value));
+			get
+			{
+				foreach (var pair in _pairs)
+					yield return new KeyValuePair<string, ICfgNode>(pair.Key, new ViewPlainField(_converter, pair.Value));
+			}
 		}
 	}
 }

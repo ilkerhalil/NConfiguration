@@ -143,7 +143,7 @@ namespace NConfiguration.Xml.Protected
 
 		private void LoadConfig(ConfigProtectedData cfg)
 		{
-			foreach(var pair in cfg.Providers.GetNodes())
+			foreach(var pair in cfg.Providers.Nested)
 			{
 				if (pair.Key == "clear")
 				{
@@ -167,7 +167,7 @@ namespace NConfiguration.Xml.Protected
 		private static NameValueCollection GetNameValueCollection(ICfgNode node)
 		{
 			var result = new NameValueCollection();
-			foreach (var pair in node.GetNodes())
+			foreach (var pair in node.Nested)
 				result.Add(pair.Key, pair.Value.As<string>());
 			return result;
 		}

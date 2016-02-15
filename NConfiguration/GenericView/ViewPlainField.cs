@@ -24,16 +24,7 @@ namespace NConfiguration.GenericView
 		}
 
 		/// <summary>
-		/// Return null.
-		/// </summary>
-		/// <returns>Return null.</returns>
-		public ICfgNode GetChild(string name)
-		{
-			return null;
-		}
-
-		/// <summary>
-		/// Return empty collection/
+		/// Return empty collection
 		/// </summary>
 		public IEnumerable<ICfgNode> GetCollection(string name)
 		{
@@ -51,11 +42,14 @@ namespace NConfiguration.GenericView
 		}
 
 		/// <summary>
-		/// Return empty collection/
+		/// Return empty collection
 		/// </summary>
-		public IEnumerable<KeyValuePair<string, ICfgNode>> GetNodes()
+		public IEnumerable<KeyValuePair<string, ICfgNode>> Nested
 		{
-			yield break;
+			get
+			{
+				yield break;
+			}
 		}
 	}
 }

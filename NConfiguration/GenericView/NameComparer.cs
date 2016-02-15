@@ -7,7 +7,7 @@ namespace NConfiguration.GenericView
 {
 	internal class NameComparer
 	{
-		public static readonly IEqualityComparer<string> Instance = StringComparer.InvariantCultureIgnoreCase;
+		public static readonly IEqualityComparer<string> Instance = StringComparer.OrdinalIgnoreCase;
 
 		public static bool Equals(string x, string y)
 		{
