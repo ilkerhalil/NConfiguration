@@ -29,23 +29,6 @@ namespace NConfiguration.GenericView.Deserialization
 			return CustomAttributesAvailable(targetType, DataContractAttributeStates);
 		}
 
-		private static readonly Dictionary<Type, AttributeState> XmlAttributeStates = new Dictionary<Type, AttributeState>
-		{
-			{typeof(XmlRootAttribute), AttributeState.Found}, // not used
-			{typeof(XmlAttributeAttribute), AttributeState.Found}, // change name
-			{typeof(XmlElementAttribute), AttributeState.Found}, // change name
-			{typeof(XmlArrayAttribute), AttributeState.NotImplemented}, // not implemented
-			{typeof(XmlArrayItemAttribute), AttributeState.NotImplemented}, // not implemented
-			{typeof(XmlTextAttribute), AttributeState.NotImplemented}, // not implemented
-			{typeof(XmlAnyElementAttribute), AttributeState.NotImplemented}, // not implemented
-			{typeof(XmlIgnoreAttribute), AttributeState.Found}, // ignore
-		};
-
-		public static AttributeState XmlAvailable(Type targetType)
-		{
-			return CustomAttributesAvailable(targetType, XmlAttributeStates);
-		}
-
 		private static AttributeState CustomAttributesAvailable(Type targetType, Dictionary<Type, AttributeState> attrStates)
 		{
 			AttributeState result = AttributeState.NotFound;

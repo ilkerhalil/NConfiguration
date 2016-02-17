@@ -71,8 +71,6 @@ namespace NConfiguration.GenericView.Deserialization
 
 			if (BuildToolkit.DataContractAvailable(targetType) == AttributeState.Found)
 				cffi = DataContractFieldReader; // DataContract deserialize
-			else if (BuildToolkit.XmlAvailable(targetType) == AttributeState.Found)
-				cffi = XmlFieldReader; // Xml deserialize
 			else
 				cffi = NativeNameFieldReader; // Native name deserialize
 
@@ -125,35 +123,6 @@ namespace NConfiguration.GenericView.Deserialization
 
 			if(dmAttr != null)
 				ffi.Required = dmAttr.IsRequired;
-		}
-
-		public void XmlFieldReader(FieldFunctionInfo ffi)
-		{
-			if (ffi.CustomAttributes.Any(o => o is XmlIgnoreAttribute))
-			{
-				ffi.Ignore = true;
-				return;
-			}
-
-			ffi.Function = DefaultFunctionType(ffi.ResultType);
-
-			var attrAttr = ffi.CustomAttributes.Select(o => o as XmlAttributeAttribute).FirstOrDefault(a => a != null);
-			var elAttr = ffi.CustomAttributes.Select(o => o as XmlElementAttribute).FirstOrDefault(a => a != null);
-
-			if (attrAttr == null && elAttr == null && !ffi.IsPublic)
-			{
-				ffi.Ignore = true;
-				return;
-			}
-
-			if (attrAttr != null && elAttr != null)
-				throw new ArgumentOutOfRangeException(string.Format("found XmlAttributeAttribute and XmlElementAttribute for member '{0}'", ffi.Name));
-
-			if (attrAttr != null && !string.IsNullOrWhiteSpace(attrAttr.AttributeName))
-				ffi.Name = attrAttr.AttributeName;
-
-			if (elAttr != null && !string.IsNullOrWhiteSpace(elAttr.ElementName))
-				ffi.Name = elAttr.ElementName;
 		}
 	}
 }

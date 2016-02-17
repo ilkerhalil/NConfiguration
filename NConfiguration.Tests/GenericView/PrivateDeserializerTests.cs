@@ -47,7 +47,7 @@ namespace NConfiguration.GenericView
 		{
 			public string PubText;
 			private string PrivProp { get; set; }
-			[XmlElement]
+			[DataMember]
 			private string PrivField;
 
 			public string getPrivProp { get { return PrivProp; } }
