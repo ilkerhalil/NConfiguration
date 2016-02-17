@@ -9,8 +9,6 @@ namespace NConfiguration.Tests
 {
 	public static class Global
 	{
-		public static readonly IStringConverter PlainConverter = new StringConverter();
-
 		public static readonly IGenericDeserializer GenericDeserializer = new GenericDeserializer();
 	}
 }

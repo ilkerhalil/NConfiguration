@@ -18,7 +18,6 @@ namespace NConfiguration.Xml
 	{
 		private static readonly XNamespace cryptDataNS = XNamespace.Get("http://www.w3.org/2001/04/xmlenc#");
 
-		private readonly IStringConverter _converter;
 		private readonly IGenericDeserializer _deserializer;
 		private IProviderCollection _providers = null;
 
@@ -30,9 +29,8 @@ namespace NConfiguration.Xml
 		/// <summary>
 		/// This settings loaded from a XML document
 		/// </summary>
-		public XmlSettings(IStringConverter converter, IGenericDeserializer deserializer)
+		public XmlSettings(IGenericDeserializer deserializer)
 		{
-			_converter = converter;
 			_deserializer = deserializer;
 		}
 
@@ -93,11 +91,11 @@ namespace NConfiguration.Xml
 				yield break;
 
 			foreach (var at in Root.Attributes().Where(a => NameComparer.Equals(name, a.Name.LocalName)))
-				yield return _deserializer.Deserialize<T>(new ViewPlainField(_converter, at.Value));
+				yield return _deserializer.Deserialize<T>(new ViewPlainField(at.Value));
 
 
 			foreach (var el in Root.Elements().Where(e => NameComparer.Equals(name, e.Name.LocalName)))
-				yield return _deserializer.Deserialize<T>(new XmlViewNode(_converter, Decrypt(el)));
+				yield return _deserializer.Deserialize<T>(new XmlViewNode(Decrypt(el)));
 		}
 	}
 }

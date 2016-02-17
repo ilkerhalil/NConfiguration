@@ -9,12 +9,10 @@ namespace NConfiguration.Json
 {
 	public abstract class JsonSettings : IAppSettings
 	{
-		private readonly IStringConverter _converter;
 		private readonly IGenericDeserializer _deserializer;
 
-		public JsonSettings(IStringConverter converter, IGenericDeserializer deserializer)
+		public JsonSettings(IGenericDeserializer deserializer)
 		{
-			_converter = converter;
 			_deserializer = deserializer;
 		}
 
@@ -29,7 +27,7 @@ namespace NConfiguration.Json
 		{
 			foreach(var val in GetValue(name))
 				foreach(var item in ViewObject.FlatArray(val))
-					yield return _deserializer.Deserialize<T>(ViewObject.CreateByJsonValue(_converter, item));
+					yield return _deserializer.Deserialize<T>(ViewObject.CreateByJsonValue(item));
 		}
 	}
 }

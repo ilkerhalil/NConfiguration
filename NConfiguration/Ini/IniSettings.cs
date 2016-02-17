@@ -8,12 +8,10 @@ namespace NConfiguration.Ini
 {
 	public abstract class IniSettings : IAppSettings
 	{
-		private readonly IStringConverter _converter;
 		private readonly IGenericDeserializer _deserializer;
 
-		public IniSettings(IStringConverter converter, IGenericDeserializer deserializer)
+		public IniSettings(IGenericDeserializer deserializer)
 		{
-			_converter = converter;
 			_deserializer = deserializer;
 		}
 
@@ -29,11 +27,11 @@ namespace NConfiguration.Ini
 			foreach (var section in Sections)
 			{
 				if (NameComparer.Equals(section.Name, sectionName))
-					yield return _deserializer.Deserialize<T>(new ViewSection(_converter, section));
+					yield return _deserializer.Deserialize<T>(new ViewSection(section));
 
 				if (section.Name == string.Empty)
 					foreach(var pair in section.Pairs.Where(p => NameComparer.Equals(p.Key, sectionName)))
-						yield return _deserializer.Deserialize<T>(new ViewPlainField(_converter, pair.Value));
+						yield return _deserializer.Deserialize<T>(new ViewPlainField(pair.Value));
 			}
 		}
 	}

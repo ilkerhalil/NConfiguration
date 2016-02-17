@@ -168,7 +168,7 @@ namespace NConfiguration.Xml.Protected
 		{
 			var result = new NameValueCollection();
 			foreach (var pair in node.Nested)
-				result.Add(pair.Key, pair.Value.As<string>());
+				result.Add(pair.Key, pair.Value.Text);
 			return result;
 		}
 

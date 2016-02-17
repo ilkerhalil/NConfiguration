@@ -40,9 +40,9 @@ namespace NConfiguration.Including
 
 		private static IAppSettings LoadSettings(string file)
 		{
-			var xmlFileLoader = new XmlFileSettingsLoader(Global.GenericDeserializer, Global.PlainConverter);
-			var jsonFileLoader = new JsonFileSettingsLoader(Global.GenericDeserializer, Global.PlainConverter);
-			var iniFileLoader = new IniFileSettingsLoader(Global.GenericDeserializer, Global.PlainConverter);
+			var xmlFileLoader = new XmlFileSettingsLoader(Global.GenericDeserializer);
+			var jsonFileLoader = new JsonFileSettingsLoader(Global.GenericDeserializer);
+			var iniFileLoader = new IniFileSettingsLoader(Global.GenericDeserializer);
 
 			var loader = new SettingsLoader(xmlFileLoader, jsonFileLoader, iniFileLoader);
 			loader.Loaded += (s, e) =>

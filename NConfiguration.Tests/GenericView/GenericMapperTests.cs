@@ -23,7 +23,7 @@ namespace NConfiguration.GenericView
 		public void CreateFunctionForEmptyStruct()
 		{
 			var mapper = new GenericMapper();
-			var func = (Func<ICfgNode, EmptyStruct>)mapper.CreateFunction(typeof(EmptyStruct), null);
+			var func = (Func<ICfgNode, EmptyStruct>)mapper.CreateFunction(typeof(EmptyStruct), null, new StringConverter());
 			var result = func(null);
 
 			Assert.AreEqual(new EmptyStruct(), result);
@@ -33,7 +33,7 @@ namespace NConfiguration.GenericView
 		public void CreateFunctionForEmptyClass()
 		{
 			var mapper = new GenericMapper();
-			var func = (Func<ICfgNode, EmptyClass>)mapper.CreateFunction(typeof(EmptyClass), null);
+			var func = (Func<ICfgNode, EmptyClass>)mapper.CreateFunction(typeof(EmptyClass), null, new StringConverter());
 			var result = func(null);
 
 			Assert.NotNull(result);
@@ -55,14 +55,14 @@ namespace NConfiguration.GenericView
 		public void CreateFunctionForTestStruct()
 		{
 			var mapper = new GenericMapper();
-			mapper.CreateFunction(typeof(TestStruct), null);
+			mapper.CreateFunction(typeof(TestStruct), null, new StringConverter());
 		}
 
 		[Test]
 		public void CreateFunctionForTestClass()
 		{
 			var mapper = new GenericMapper();
-			mapper.CreateFunction(typeof(TestClass), null);
+			mapper.CreateFunction(typeof(TestClass), null, new StringConverter());
 		}
 	}
 }

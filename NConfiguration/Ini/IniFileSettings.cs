@@ -18,8 +18,8 @@ namespace NConfiguration.Ini
 		private readonly List<Section> _sections;
 		private readonly FileMonitor _fm;
 
-		public IniFileSettings(string fileName, IStringConverter converter, IGenericDeserializer deserializer)
-			: base(converter, deserializer)
+		public IniFileSettings(string fileName, IGenericDeserializer deserializer)
+			: base(deserializer)
 		{
 			try
 			{

@@ -18,12 +18,12 @@ namespace NConfiguration.GenericView
 			Assert.IsNull(root.GetChild("noitem"));
 
 			Assert.IsNotNull(root.GetChild("item1"));
-			Assert.AreEqual("item2.value2item3.value1", root.As<string>());
-			Assert.AreEqual("item1.value1", root.GetChild("item1").As<string>());
+			Assert.AreEqual("item2.value2item3.value1", root.Text);
+			Assert.AreEqual("item1.value1", root.GetChild("item1").Text);
 
 			CollectionAssert.AreEqual(
 				new[] { "item2.value1", "item2.value2" },
-				root.GetCollection("item2").Select(n => n.As<string>()));
+				root.GetCollection("item2").Select(n => n.Text));
 		}
 
 		private XDocument _doc1 = @"<?xml version='1.0' encoding='utf-8' ?>
@@ -48,7 +48,9 @@ namespace NConfiguration.GenericView
 		public void ParseBoolean(object expected, string text)
 		{
 			var root = string.Format("<Config>{0}</Config>", text).ToXmlView();
-			Assert.AreEqual(expected, root.As<bool?>());
+			Assert.AreEqual(expected, _converter.Convert<bool?>(root.Text));
 		}
+
+		private StringConverter _converter = new StringConverter();
 	}
 }

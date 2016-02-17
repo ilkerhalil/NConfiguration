@@ -13,17 +13,19 @@ namespace NConfiguration.GenericView.Deserialization
 		private Type _targetType;
 		private bool _supportInitialize;
 		private IGenericDeserializer _deserializer;
+		private StringConverter _converter;
 		private ParameterExpression _pCfgNode = Expression.Parameter(typeof(ICfgNode));
 		private List<Expression> _bodyList = new List<Expression>();
 		private ParameterExpression _pResult;
 		private Action<FieldFunctionInfo> _configureFieldInfo;
 
-		public ComplexFunctionBuilder(Type targetType, IGenericDeserializer deserializer, Action<FieldFunctionInfo> configureFieldInfo)
+		public ComplexFunctionBuilder(Type targetType, IGenericDeserializer deserializer, StringConverter converter, Action<FieldFunctionInfo> configureFieldInfo)
 		{
 			_targetType = targetType;
 			_supportInitialize = typeof(ISupportInitialize).IsAssignableFrom(_targetType);
 			_pResult = Expression.Parameter(_targetType);
 			_deserializer = deserializer;
+			_converter = converter;
 			_configureFieldInfo = configureFieldInfo;
 		}
 
@@ -111,7 +113,7 @@ namespace NConfiguration.GenericView.Deserialization
 				{
 					var mi = ffi.Required ? BuildToolkit.RequiredPrimitiveFieldMI : BuildToolkit.OptionalPrimitiveFieldMI;
 					mi = mi.MakeGenericMethod(ffi.ResultType);
-					return Expression.Call(null, mi, Expression.Constant(ffi.Name), _pCfgNode);
+					return Expression.Call(null, mi, Expression.Constant(_converter), Expression.Constant(ffi.Name), _pCfgNode);
 				}
 
 				case FieldFunctionType.Array:

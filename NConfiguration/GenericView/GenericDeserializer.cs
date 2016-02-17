@@ -9,6 +9,7 @@ namespace NConfiguration.GenericView
 {
 	public class GenericDeserializer: IGenericDeserializer
 	{
+		private StringConverter _converter;
 		private IGenericMapper _mapper;
 		private readonly Func<Type, object> _creater;
 		private ConcurrentDictionary<Type, object> _funcMap = new ConcurrentDictionary<Type, object>();
@@ -22,6 +23,8 @@ namespace NConfiguration.GenericView
 		{
 			if (mapper == null)
 				throw new ArgumentNullException("mapper");
+
+			_converter =  new StringConverter();
 			_mapper = mapper;
 			_creater = CreateFunction;
 		}
@@ -38,6 +41,9 @@ namespace NConfiguration.GenericView
 
 		public T Deserialize<T>(ICfgNode cfgNode)
 		{
+			//if (GenericMapper.IsPrimitive(typeof(T)))
+			//	return _converter.Convert<T>(cfgNode.As<string>());
+
 			return ((Func<ICfgNode, T>)GetFunction(typeof(T)))(cfgNode);
 		}
 
@@ -48,7 +54,7 @@ namespace NConfiguration.GenericView
 
 		private object CreateFunction(Type type)
 		{
-			return _mapper.CreateFunction(type, this);
+			return _mapper.CreateFunction(type, this, _converter);
 		}
 	}
 }

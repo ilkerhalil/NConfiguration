@@ -12,17 +12,14 @@ namespace NConfiguration.Ini
 {
 	public class IniFileSettingsLoader : FileSearcher
 	{
-		private readonly IStringConverter _converter;
-
-		public IniFileSettingsLoader(IGenericDeserializer deserializer, IStringConverter converter)
+		public IniFileSettingsLoader(IGenericDeserializer deserializer)
 			: base(deserializer)
 		{
-			_converter = converter;
 		}
 
 		public IIdentifiedSource LoadFile(string path)
 		{
-			return new IniFileSettings(path, _converter, Deserializer);
+			return new IniFileSettings(path, Deserializer);
 		}
 
 		/// <summary>
@@ -38,7 +35,7 @@ namespace NConfiguration.Ini
 
 		public override IIdentifiedSource CreateFileSetting(string path)
 		{
-			return new IniFileSettings(path, _converter, Deserializer);
+			return new IniFileSettings(path, Deserializer);
 		}
 	}
 }

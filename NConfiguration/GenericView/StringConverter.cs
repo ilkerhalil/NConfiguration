@@ -11,7 +11,7 @@ namespace NConfiguration.GenericView
 	/// <summary>
 	/// Converter string into a simple values
 	/// </summary>
-	public class StringConverter : IStringConverter
+	public class StringConverter
 	{
 		private readonly IStringMapper _mapper;
 		private readonly Func<Type, object> _creater;

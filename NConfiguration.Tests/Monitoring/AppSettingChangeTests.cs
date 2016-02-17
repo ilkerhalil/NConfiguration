@@ -34,7 +34,7 @@ namespace NConfiguration.Monitoring
 			string cfgFile = Path.GetTempFileName();
 			File.WriteAllText(cfgFile, _xmlCfgAutoOrigin);
 
-			var xmlFileLoader = new XmlFileSettingsLoader(Global.GenericDeserializer, Global.PlainConverter);
+			var xmlFileLoader = new XmlFileSettingsLoader(Global.GenericDeserializer);
 
 			IAppSettings settings = xmlFileLoader.LoadFile(cfgFile);
 			
@@ -66,7 +66,7 @@ namespace NConfiguration.Monitoring
 		[Test]
 		public void MultiChange()
 		{
-			var xmlFileLoader = new XmlFileSettingsLoader(Global.GenericDeserializer, Global.PlainConverter);
+			var xmlFileLoader = new XmlFileSettingsLoader(Global.GenericDeserializer);
 
 			string cfgMainFile = Path.GetTempFileName();
 			string cfgAdditionalFile = Path.GetTempFileName();

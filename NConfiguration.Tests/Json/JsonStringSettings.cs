@@ -17,7 +17,7 @@ namespace NConfiguration.Json
 		private readonly JObject _obj;
 
 		public JsonStringSettings(string text)
-			: base(Global.PlainConverter, Global.GenericDeserializer)
+			: base(Global.GenericDeserializer)
 		{
 			var val = JValue.Parse(text);
 			if (val.Type != TokenType.Object)

@@ -15,7 +15,7 @@ namespace NConfiguration.Ini
 		private readonly List<Section> _sections;
 
 		public IniStringSettings(string text)
-			:base(Global.PlainConverter, Global.GenericDeserializer)
+			:base(Global.GenericDeserializer)
 		{
 			_sections = Section.Parse(text);
 		}

@@ -13,25 +13,23 @@ namespace NConfiguration.Ini
 	public class ViewSection: ICfgNode
 	{
 		private List<KeyValuePair<string, string>> _pairs;
-		private IStringConverter _converter;
 
 		/// <summary>
 		/// The mapping INI-document to nodes of configuration
 		/// </summary>
 		/// <param name="converter">string converter into a simple values</param>
 		/// <param name="section">section in INI-document</param>
-		public ViewSection(IStringConverter converter, Section section)
+		public ViewSection(Section section)
 		{
-			_converter = converter;
 			_pairs = section.Pairs;
 		}
 
-		/// <summary>
-		/// Throw NotSupportedException.
-		/// </summary>
-		public T As<T>()
+		public string Text
 		{
-			throw new NotSupportedException("section can't contain value");
+			get
+			{
+				throw new NotSupportedException("section can't contain value");
+			}
 		}
 
 		/// <summary>
@@ -42,7 +40,7 @@ namespace NConfiguration.Ini
 			get
 			{
 				foreach (var pair in _pairs)
-					yield return new KeyValuePair<string, ICfgNode>(pair.Key, new ViewPlainField(_converter, pair.Value));
+					yield return new KeyValuePair<string, ICfgNode>(pair.Key, new ViewPlainField(pair.Value));
 			}
 		}
 	}

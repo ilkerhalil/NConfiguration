@@ -77,7 +77,6 @@
     <Compile Include="GenericView\Deserialization\IStringMapper.cs" />
     <Compile Include="GenericView\Deserialization\StringMapper.cs" />
     <Compile Include="GenericView\StringConverter.cs" />
-    <Compile Include="GenericView\IStringConverter.cs" />
     <Compile Include="Json\JsonFileSettings.cs" />
     <Compile Include="Json\JsonFileSettingsLoader.cs" />
     <Compile Include="Json\JsonSettings.cs" />

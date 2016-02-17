@@ -11,7 +11,7 @@ namespace NConfiguration.GenericView.Deserialization
 {
 	public class GenericMapper : IGenericMapper
 	{
-		private readonly HashSet<Type> _primitiveTypes = new HashSet<Type>
+		private static readonly HashSet<Type> _primitiveTypes = new HashSet<Type>
 			{
 				typeof(String), typeof(Boolean), typeof(Char),
 				typeof(Byte), typeof(SByte),
@@ -25,7 +25,7 @@ namespace NConfiguration.GenericView.Deserialization
 		{
 		}
 
-		public virtual bool IsPrimitive(Type type)
+		public static bool IsPrimitive(Type type)
 		{
 			var ntype = Nullable.GetUnderlyingType(type);
 			if(ntype != null) // is Nullable<>
@@ -50,22 +50,22 @@ namespace NConfiguration.GenericView.Deserialization
 				|| genType == typeof(IEnumerable<>);
 		}
 
-		public object CreateFunction(Type targetType, IGenericDeserializer deserializer)
+		public object CreateFunction(Type targetType, IGenericDeserializer deserializer, StringConverter converter)
 		{
 			if (targetType == typeof(ICfgNode))
 				return BuildToolkit.CreateNativeFunction();
 
 			if(IsPrimitive(targetType))
-				return BuildToolkit.CreatePrimitiveFunction(targetType);
+				return BuildToolkit.CreatePrimitiveFunction(targetType, converter);
 
 			if(targetType.IsArray ||
 				IsCollection(targetType))
 				throw new ArgumentOutOfRangeException(string.Format("type '{0}' is collection", targetType.FullName));
 
-			return CreateComplexFunctionBuilder(targetType, deserializer).Compile();
+			return CreateComplexFunctionBuilder(targetType, deserializer, converter).Compile();
 		}
 
-		public virtual ComplexFunctionBuilder CreateComplexFunctionBuilder(Type targetType, IGenericDeserializer deserializer)
+		public virtual ComplexFunctionBuilder CreateComplexFunctionBuilder(Type targetType, IGenericDeserializer deserializer, StringConverter converter)
 		{
 			Action<FieldFunctionInfo> cffi;
 
@@ -76,7 +76,7 @@ namespace NConfiguration.GenericView.Deserialization
 			else
 				cffi = NativeNameFieldReader; // Native name deserialize
 
-			return new ComplexFunctionBuilder(targetType, deserializer, cffi);
+			return new ComplexFunctionBuilder(targetType, deserializer, converter, cffi);
 		}
 
 		public void NativeNameFieldReader(FieldFunctionInfo ffi)

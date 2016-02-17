@@ -24,8 +24,8 @@ namespace NConfiguration.Xml
 		/// <param name="fileName">file name</param>
 		/// <param name="converter"></param>
 		/// <param name="deserializer">deserializer</param>
-		public XmlFileSettings(string fileName, IStringConverter converter, IGenericDeserializer deserializer)
-			: base(converter, deserializer)
+		public XmlFileSettings(string fileName, IGenericDeserializer deserializer)
+			: base(deserializer)
 		{
 			try
 			{

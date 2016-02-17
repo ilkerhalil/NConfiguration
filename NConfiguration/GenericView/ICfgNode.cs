@@ -13,10 +13,8 @@ namespace NConfiguration.GenericView
 		IEnumerable<KeyValuePair<string, ICfgNode>> Nested { get; }
 
 		/// <summary>
-		/// Converts the value of a node in an instance of the specified type.
+		/// Contain text value in this node.
 		/// </summary>
-		/// <typeparam name="T">The required type</typeparam>
-		/// <returns>The required instance</returns>
-		T As<T>();
+		string Text { get; }
 	}
 }

@@ -10,10 +10,10 @@ namespace NConfiguration.GenericView.Deserialization
 {
 	public static class BuildToolkit
 	{
-		internal static object CreatePrimitiveFunction(Type type)
+		internal static object CreatePrimitiveFunction(Type type, StringConverter converter)
 		{
 			var funcType = typeof(Func<,>).MakeGenericType(typeof(ICfgNode), type);
-			return Delegate.CreateDelegate(funcType, PrimitiveTargetMI.MakeGenericMethod(type));
+			return Delegate.CreateDelegate(funcType, converter, PrimitiveTargetMI.MakeGenericMethod(type));
 		}
 
 		private static readonly Dictionary<Type, AttributeState> DataContractAttributeStates = new Dictionary<Type, AttributeState>
@@ -78,22 +78,22 @@ namespace NConfiguration.GenericView.Deserialization
 
 		internal static readonly MethodInfo PrimitiveTargetMI = typeof(BuildToolkit).GetMethod("PrimitiveTarget", BindingFlags.Static | BindingFlags.NonPublic);
 
-		internal static T PrimitiveTarget<T>(ICfgNode node)
+		internal static T PrimitiveTarget<T>(StringConverter converter, ICfgNode node)
 		{
-			return node.As<T>();
+			return converter.Convert<T>(node.Text);
 		}
 
 		internal static readonly MethodInfo OptionalPrimitiveFieldMI = typeof(BuildToolkit).GetMethod("OptionalPrimitiveField", BindingFlags.Static | BindingFlags.NonPublic);
 
-		internal static T OptionalPrimitiveField<T>(string name, ICfgNode node)
+		internal static T OptionalPrimitiveField<T>(StringConverter converter, string name, ICfgNode node)
 		{
 			try
 			{
 				var field = node.GetChild(name);
 				if (field == null)
 					return default(T);
-			
-				return field.As<T>();
+
+				return converter.Convert<T>(field.Text);
 			}
 			catch (Exception ex)
 			{
@@ -103,7 +103,7 @@ namespace NConfiguration.GenericView.Deserialization
 
 		internal static readonly MethodInfo RequiredPrimitiveFieldMI = typeof(BuildToolkit).GetMethod("RequiredPrimitiveField", BindingFlags.Static | BindingFlags.NonPublic);
 
-		internal static T RequiredPrimitiveField<T>(string name, ICfgNode node)
+		internal static T RequiredPrimitiveField<T>(StringConverter converter, string name, ICfgNode node)
 		{
 			try
 			{
@@ -111,7 +111,7 @@ namespace NConfiguration.GenericView.Deserialization
 				if (field == null)
 					throw new FormatException("field not found");
 
-				return field.As<T>();
+				return converter.Convert<T>(field.Text);
 			}
 			catch (Exception ex)
 			{

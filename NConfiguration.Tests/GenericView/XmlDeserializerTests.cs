@@ -15,11 +15,11 @@ namespace NConfiguration.GenericView
 	{
 		public class XmlMapper: GenericMapper
 		{
-			public override ComplexFunctionBuilder CreateComplexFunctionBuilder(Type targetType, IGenericDeserializer deserializer)
+			public override ComplexFunctionBuilder CreateComplexFunctionBuilder(Type targetType, IGenericDeserializer deserializer, StringConverter converter)
 			{
 				if (BuildToolkit.XmlAvailable(targetType) == AttributeState.NotImplemented)
 					throw new NotImplementedException();
-				return new ComplexFunctionBuilder(targetType, deserializer, XmlFieldReader);
+				return new ComplexFunctionBuilder(targetType, deserializer, converter, XmlFieldReader);
 			}
 		}
 
