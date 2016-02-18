@@ -2,7 +2,7 @@ using System.Xml;
 using System.Xml.Linq;
 using NConfiguration.Xml.Protected;
 using NConfiguration.Xml;
-using NConfiguration.GenericView;
+using NConfiguration.Serialization;
 using NConfiguration.Tests;
 using NConfiguration.Ini;
 using System.Collections.Generic;

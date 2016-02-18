@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 
-namespace NConfiguration.GenericView.Deserialization
+namespace NConfiguration.Serialization.Deserialization
 {
 	public partial class StringMapper
 	{

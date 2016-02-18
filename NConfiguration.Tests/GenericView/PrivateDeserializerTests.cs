@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Linq.Expressions;
 using NUnit.Framework;
-using NConfiguration.GenericView.Deserialization;
+using NConfiguration.Serialization.Deserialization;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 
-namespace NConfiguration.GenericView
+namespace NConfiguration.Serialization
 {
 	[TestFixture]
 	public class PrivateDeserializerTests

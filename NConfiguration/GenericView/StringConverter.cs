@@ -4,9 +4,9 @@ using System.Globalization;
 using System.Reflection;
 using System.Collections.Concurrent;
 using System.Xml.Linq;
-using NConfiguration.GenericView.Deserialization;
+using NConfiguration.Serialization.Deserialization;
 
-namespace NConfiguration.GenericView
+namespace NConfiguration.Serialization
 {
 	/// <summary>
 	/// Converter string into a simple values

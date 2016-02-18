@@ -4,7 +4,7 @@ using System.IO;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using NConfiguration.Xml;
-using NConfiguration.GenericView;
+using NConfiguration.Serialization;
 using NConfiguration.Tests;
 
 namespace NConfiguration

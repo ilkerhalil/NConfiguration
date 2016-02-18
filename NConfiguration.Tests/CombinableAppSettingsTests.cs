@@ -4,7 +4,7 @@ using System.Collections.Specialized;
 using System.Configuration;
 using NConfiguration.Xml;
 using System.IO;
-using NConfiguration.GenericView;
+using NConfiguration.Serialization;
 using NConfiguration.Tests;
 using NConfiguration.Examples;
 using NConfiguration.ExampleTypes;

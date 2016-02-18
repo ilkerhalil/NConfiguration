@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 
-namespace NConfiguration.GenericView
+namespace NConfiguration.Serialization
 {
 	public class EnumHelper<T> where T: struct
 	{

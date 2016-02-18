@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 
 namespace NConfiguration.Serialization
 {
-	internal interface IEnumParser<T> where T: struct
+	public interface IDeserializer<T>
 	{
-		T Parse(string text);
+		T Deserialize(IDeserializer context, ICfgNode cfgNode);
 	}
 }

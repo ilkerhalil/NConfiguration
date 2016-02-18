@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using System.Reflection;
 
-namespace NConfiguration.GenericView.Deserialization
+namespace NConfiguration.Serialization.Deserialization
 {
 	public static class BuildToolkit
 	{
@@ -72,7 +72,7 @@ namespace NConfiguration.GenericView.Deserialization
 		{
 			try
 			{
-				var field = node.GetChild(name);
+				var field = node.NestedByName(name).FirstOrDefault();
 				if (field == null)
 					return default(T);
 
@@ -90,7 +90,7 @@ namespace NConfiguration.GenericView.Deserialization
 		{
 			try
 			{
-				var field = node.GetChild(name);
+				var field = node.NestedByName(name).FirstOrDefault();
 				if (field == null)
 					throw new FormatException("field not found");
 
@@ -108,7 +108,7 @@ namespace NConfiguration.GenericView.Deserialization
 		{
 			try
 			{
-				var field = node.GetChild(name);
+				var field = node.NestedByName(name).FirstOrDefault();
 				if (field == null)
 					throw new FormatException("field not found");
 
@@ -126,7 +126,7 @@ namespace NConfiguration.GenericView.Deserialization
 		{
 			try
 			{
-				var field = node.GetChild(name);
+				var field = node.NestedByName(name).FirstOrDefault();
 				if (field == null)
 					return default(T);
 
@@ -146,7 +146,7 @@ namespace NConfiguration.GenericView.Deserialization
 			try
 			{
 				List<T> result = new List<T>();
-				foreach (var chItem in node.GetCollection(name))
+				foreach (var chItem in node.NestedByName(name))
 				{
 					result.Add(deserializer.Deserialize<T>(chItem));
 					i++;

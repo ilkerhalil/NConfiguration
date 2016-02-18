@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("ExM")]
 [assembly: AssemblyProduct("")]
-[assembly: AssemblyCopyright(@"LGPLv3 Copyright © 2013 (git://github.com/ExM/NConfiguration.git)")]
+[assembly: AssemblyCopyright(@"LGPLv3 Copyright © 2016 (git://github.com/ExM/NConfiguration.git)")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

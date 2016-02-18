@@ -5,7 +5,7 @@ using System.Linq;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using NConfiguration.Xml.Protected;
-using NConfiguration.GenericView;
+using NConfiguration.Serialization;
 using NConfiguration.Monitoring;
 
 namespace NConfiguration.Xml

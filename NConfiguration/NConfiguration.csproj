@@ -59,7 +59,6 @@
     <Compile Include="Combination\ICombiner.cs" />
     <Compile Include="Combination\ICombiner%271.cs" />
     <Compile Include="Combination\ICombinerFactory.cs" />
-    <Compile Include="GenericView\CfgNodeExtensions.cs" />
     <Compile Include="ICombinableAppSettings.cs" />
     <Compile Include="DeserializeChildException.cs" />
     <Compile Include="GenericView\Deserialization\FieldFunctionInfo.cs" />
@@ -105,12 +104,18 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="GenericView\NameComparer.cs" />
+    <Compile Include="Serialization\BuildUtils.cs" />
+    <Compile Include="Serialization\ChildDeserializer.cs" />
+    <Compile Include="Serialization\DefaultDeserializer.cs" />
+    <Compile Include="Serialization\IDeserializer%271.cs" />
+    <Compile Include="Serialization\SerializeExtensions.cs" />
+    <Compile Include="Serialization\IDeserializer.cs" />
     <Compile Include="Xml\XmlViewNode.cs" />
     <Compile Include="GenericView\IGenericDeserializer.cs" />
     <Compile Include="GenericView\Deserialization\GenericMapper.cs" />
     <Compile Include="GenericView\Deserialization\ComplexFunctionBuilder.cs" />
     <Compile Include="GenericView\GenericDeserializer.cs" />
-    <Compile Include="GenericView\ICfgNode.cs" />
+    <Compile Include="Serialization\ICfgNode.cs" />
     <Compile Include="IFilePathOwner.cs" />
     <Compile Include="IAppSettings.cs" />
     <Compile Include="AppSettingExtensions.cs" />

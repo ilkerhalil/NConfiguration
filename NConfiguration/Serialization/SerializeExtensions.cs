@@ -1,16 +1,15 @@
-using System.Linq;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
-namespace NConfiguration.GenericView
+namespace NConfiguration.Serialization
 {
-	public static class CfgNodeExtensions
+	public static class SerializeExtensions
 	{
-		public static ICfgNode GetChild(this ICfgNode parent, string name)
+		public static T Deserialize<T>(this IDeserializer deserializer, ICfgNode cfgNode)
 		{
-			return parent.Nested
-				.Where(p => NameComparer.Equals(p.Key, name))
-				.Select(p => p.Value)
-				.FirstOrDefault();
+			return deserializer.Deserialize<T>(deserializer, cfgNode);
 		}
 
 		/// <summary>
@@ -18,7 +17,7 @@ namespace NConfiguration.GenericView
 		/// </summary>
 		/// <param name="name">node name is not case-sensitive.</param>
 		/// <returns>Returns the collection of child nodes with the specified name or empty if no match is found.</returns>
-		public static IEnumerable<ICfgNode> GetCollection(this ICfgNode parent, string name)
+		public static IEnumerable<ICfgNode> NestedByName(this ICfgNode parent, string name)
 		{
 			return parent.Nested
 				.Where(p => NameComparer.Equals(p.Key, name))

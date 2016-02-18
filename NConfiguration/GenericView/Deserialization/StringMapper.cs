@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Collections.Concurrent;
 using System.Xml.Linq;
 
-namespace NConfiguration.GenericView.Deserialization
+namespace NConfiguration.Serialization.Deserialization
 {
 	/// <summary>
 	/// Allows you to create delegates to convert a string to an instance of a specified type.

@@ -1,6 +1,7 @@
+using NConfiguration.Serialization;
 using System;
 
-namespace NConfiguration.GenericView.Deserialization
+namespace NConfiguration.Serialization.Deserialization
 {
 	public interface IGenericMapper
 	{

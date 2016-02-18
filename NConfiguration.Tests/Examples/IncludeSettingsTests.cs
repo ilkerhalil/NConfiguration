@@ -8,7 +8,7 @@ using NConfiguration.Xml;
 using NConfiguration.Joining;
 using NConfiguration.Examples;
 using NConfiguration.Xml.Protected;
-using NConfiguration.GenericView;
+using NConfiguration.Serialization;
 using NConfiguration.Json;
 using NConfiguration.Combination;
 

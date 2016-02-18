@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using System.Linq;
-using NConfiguration.GenericView;
+using NConfiguration.Serialization;
 using System.Collections.Specialized;
 
 namespace NConfiguration.Ini

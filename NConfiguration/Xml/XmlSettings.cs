@@ -7,7 +7,7 @@ using System.Linq;
 using System.Xml.Serialization;
 using NConfiguration.Xml.Protected;
 using System.Security.Cryptography;
-using NConfiguration.GenericView;
+using NConfiguration.Serialization;
 
 namespace NConfiguration.Xml
 {

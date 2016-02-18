@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
 
-namespace NConfiguration.GenericView
+namespace NConfiguration.Serialization
 {
 	/// <summary>
 	/// Representation of a simple text value.

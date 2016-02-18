@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using NConfiguration.GenericView.Deserialization;
+using NConfiguration.Serialization.Deserialization;
 using System.Collections.Concurrent;
 
-namespace NConfiguration.GenericView
+namespace NConfiguration.Serialization
 {
 	public class GenericDeserializer: IGenericDeserializer
 	{

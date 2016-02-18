@@ -6,10 +6,10 @@ using System.Linq.Expressions;
 using System.Xml;
 using System.Xml.Serialization;
 using NUnit.Framework;
-using NConfiguration.GenericView.Deserialization;
+using NConfiguration.Serialization.Deserialization;
 using System.Runtime.Serialization;
 
-namespace NConfiguration.GenericView
+namespace NConfiguration.Serialization
 {
 	[TestFixture]
 	public class XmlDeserializerTests

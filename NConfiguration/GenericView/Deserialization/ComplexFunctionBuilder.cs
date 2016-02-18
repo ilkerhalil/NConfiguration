@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.ComponentModel;
 
-namespace NConfiguration.GenericView.Deserialization
+namespace NConfiguration.Serialization.Deserialization
 {
 	public class ComplexFunctionBuilder
 	{

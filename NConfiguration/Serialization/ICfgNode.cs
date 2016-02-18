@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace NConfiguration.GenericView
+namespace NConfiguration.Serialization
 {
 	/// <summary>
 	/// A node in the document of configuration

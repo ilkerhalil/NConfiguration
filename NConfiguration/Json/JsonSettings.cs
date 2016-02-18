@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using NConfiguration.GenericView;
+using NConfiguration.Serialization;
 using NConfiguration.Json.Parsing;
 
 namespace NConfiguration.Json

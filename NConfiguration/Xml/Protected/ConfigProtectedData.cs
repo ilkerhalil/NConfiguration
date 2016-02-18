@@ -1,5 +1,5 @@
 using System.Runtime.Serialization;
-using NConfiguration.GenericView;
+using NConfiguration.Serialization;
 
 namespace NConfiguration.Xml.Protected
 {

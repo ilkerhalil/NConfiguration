@@ -6,7 +6,7 @@ using System.Configuration;
 using System.Collections.Specialized;
 using System.Xml;
 using NConfiguration.Joining;
-using NConfiguration.GenericView;
+using NConfiguration.Serialization;
 
 namespace NConfiguration.Xml.Protected
 {
