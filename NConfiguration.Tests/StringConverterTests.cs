@@ -26,7 +26,7 @@ namespace NConfiguration
 		[TestCase("", null)]
 		public void NEnumByte(string text, ByteEn? expected)
 		{
-			Assert.AreEqual(expected, new StringConverter().Convert<ByteEn?>(text));
+			Assert.AreEqual(expected, DefaultDeserializer.Instance.Deserialize<ByteEn?>(new ViewPlainField(text)));
 		}
 	}
 }

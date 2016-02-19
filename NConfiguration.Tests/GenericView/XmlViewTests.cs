@@ -48,9 +48,7 @@ namespace NConfiguration.Serialization
 		public void ParseBoolean(object expected, string text)
 		{
 			var root = string.Format("<Config>{0}</Config>", text).ToXmlView();
-			Assert.AreEqual(expected, _converter.Convert<bool?>(root.Text));
+			Assert.AreEqual(expected, DefaultDeserializer.Instance.Deserialize<bool?>(root));
 		}
-
-		private StringConverter _converter = new StringConverter();
 	}
 }

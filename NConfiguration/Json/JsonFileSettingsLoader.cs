@@ -12,7 +12,7 @@ namespace NConfiguration.Json
 {
 	public class JsonFileSettingsLoader : FileSearcher
 	{
-		public JsonFileSettingsLoader(IGenericDeserializer deserializer)
+		public JsonFileSettingsLoader(IDeserializer deserializer)
 			: base(deserializer)
 		{
 		}

@@ -12,7 +12,7 @@ namespace NConfiguration.Xml
 {
 	public class XmlFileSettingsLoader : FileSearcher
 	{
-		public XmlFileSettingsLoader(IGenericDeserializer deserializer)
+		public XmlFileSettingsLoader(IDeserializer deserializer)
 			: base(deserializer)
 		{
 		}

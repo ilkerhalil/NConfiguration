@@ -18,7 +18,7 @@ namespace NConfiguration.Xml
 	{
 		private static readonly XNamespace cryptDataNS = XNamespace.Get("http://www.w3.org/2001/04/xmlenc#");
 
-		private readonly IGenericDeserializer _deserializer;
+		private readonly IDeserializer _deserializer;
 		private IProviderCollection _providers = null;
 
 		/// <summary>
@@ -29,7 +29,7 @@ namespace NConfiguration.Xml
 		/// <summary>
 		/// This settings loaded from a XML document
 		/// </summary>
-		public XmlSettings(IGenericDeserializer deserializer)
+		public XmlSettings(IDeserializer deserializer)
 		{
 			_deserializer = deserializer;
 		}

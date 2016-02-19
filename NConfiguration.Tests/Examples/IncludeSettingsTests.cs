@@ -20,8 +20,8 @@ namespace NConfiguration.Examples
 		[Test]
 		public void Load()
 		{
-			
-			var xmlFileLoader = new XmlFileSettingsLoader(Global.GenericDeserializer);
+
+			var xmlFileLoader = new XmlFileSettingsLoader(DefaultDeserializer.Instance);
 
 			var loader = new SettingsLoader(xmlFileLoader);
 			loader.Loaded += (s,e) => 
@@ -42,8 +42,8 @@ namespace NConfiguration.Examples
 		[Test]
 		public void LoadJson()
 		{
-			var xmlFileLoader = new XmlFileSettingsLoader(Global.GenericDeserializer);
-			var jsonFileLoader = new JsonFileSettingsLoader(Global.GenericDeserializer);
+			var xmlFileLoader = new XmlFileSettingsLoader(DefaultDeserializer.Instance);
+			var jsonFileLoader = new JsonFileSettingsLoader(DefaultDeserializer.Instance);
 
 			var loader = new SettingsLoader(xmlFileLoader, jsonFileLoader);
 			loader.Loaded += (s, e) =>
@@ -64,7 +64,7 @@ namespace NConfiguration.Examples
 		[Test]
 		public void AutoCombineLoad()
 		{
-			var xmlFileLoader = new XmlFileSettingsLoader(Global.GenericDeserializer);
+			var xmlFileLoader = new XmlFileSettingsLoader(DefaultDeserializer.Instance);
 
 			var loader = new SettingsLoader(xmlFileLoader);
 			loader.Loaded += (s, e) =>
@@ -90,7 +90,7 @@ namespace NConfiguration.Examples
 			KeyManager.Create();
 
 			var providerLoader = new ProviderLoader();
-			var xmlFileLoader = new XmlFileSettingsLoader(Global.GenericDeserializer);
+			var xmlFileLoader = new XmlFileSettingsLoader(DefaultDeserializer.Instance);
 
 			var loader = new SettingsLoader(xmlFileLoader);
 			loader.Loaded += providerLoader.TryExtractConfigProtectedData;

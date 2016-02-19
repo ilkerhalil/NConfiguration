@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Linq.Expressions;
 using NUnit.Framework;
-using NConfiguration.Serialization.Deserialization;
 using System.Globalization;
 using System.ComponentModel;
 using System.Runtime.Serialization;
@@ -47,9 +46,8 @@ namespace NConfiguration.Serialization
 		public void ParseNotEmpty()
 		{
 			var root = @"<Config Text='text'/>".ToXmlView();
-			var d = new GenericDeserializer();
 
-			var tc = d.Deserialize<SupportInitializeType>(root);
+			var tc = DefaultDeserializer.Instance.Deserialize<SupportInitializeType>(root);
 
 			Assert.IsTrue(tc.OnBegin);
 			Assert.IsTrue(tc.OnEnd);
@@ -62,9 +60,8 @@ namespace NConfiguration.Serialization
 		public void ParseNull()
 		{
 			var root = @"<Config />".ToXmlView();
-			var d = new GenericDeserializer();
 
-			var tc = d.Deserialize<SupportInitializeType>(root);
+			var tc = DefaultDeserializer.Instance.Deserialize<SupportInitializeType>(root);
 
 			Assert.IsTrue(tc.OnBegin);
 			Assert.IsTrue(tc.OnEnd);

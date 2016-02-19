@@ -17,7 +17,7 @@ namespace NConfiguration
 		[TestFixtureSetUp]
 		public void SetUp()
 		{
-			_settings = new XmlFileSettings("testConfig1.xml", Global.GenericDeserializer);
+			_settings = new XmlFileSettings("testConfig1.xml", DefaultDeserializer.Instance);
 		}
 		
 		[Test]

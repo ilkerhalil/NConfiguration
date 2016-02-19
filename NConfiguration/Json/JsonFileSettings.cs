@@ -18,7 +18,7 @@ namespace NConfiguration.Json
 		private readonly JObject _obj;
 		private readonly FileMonitor _fm;
 
-		public JsonFileSettings(string fileName, IGenericDeserializer deserializer)
+		public JsonFileSettings(string fileName, IDeserializer deserializer)
 			: base(deserializer)
 		{
 			try

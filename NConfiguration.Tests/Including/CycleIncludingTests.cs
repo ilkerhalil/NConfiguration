@@ -8,6 +8,7 @@ using NConfiguration.Joining;
 using NConfiguration.Json;
 using NConfiguration.Ini;
 using System.IO;
+using NConfiguration.Serialization;
 
 namespace NConfiguration.Including
 {
@@ -40,9 +41,9 @@ namespace NConfiguration.Including
 
 		private static IAppSettings LoadSettings(string file)
 		{
-			var xmlFileLoader = new XmlFileSettingsLoader(Global.GenericDeserializer);
-			var jsonFileLoader = new JsonFileSettingsLoader(Global.GenericDeserializer);
-			var iniFileLoader = new IniFileSettingsLoader(Global.GenericDeserializer);
+			var xmlFileLoader = new XmlFileSettingsLoader(DefaultDeserializer.Instance);
+			var jsonFileLoader = new JsonFileSettingsLoader(DefaultDeserializer.Instance);
+			var iniFileLoader = new IniFileSettingsLoader(DefaultDeserializer.Instance);
 
 			var loader = new SettingsLoader(xmlFileLoader, jsonFileLoader, iniFileLoader);
 			loader.Loaded += (s, e) =>

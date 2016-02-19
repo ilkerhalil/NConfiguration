@@ -12,7 +12,7 @@ namespace NConfiguration.Ini
 {
 	public class IniFileSettingsLoader : FileSearcher
 	{
-		public IniFileSettingsLoader(IGenericDeserializer deserializer)
+		public IniFileSettingsLoader(IDeserializer deserializer)
 			: base(deserializer)
 		{
 		}

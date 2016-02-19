@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Linq.Expressions;
 using NUnit.Framework;
-using NConfiguration.Serialization.Deserialization;
 
 namespace NConfiguration.Serialization
 {
@@ -45,9 +44,8 @@ namespace NConfiguration.Serialization
 	EnProp='One'
 	NEnProp='Two'
 ><NByteField>0</NByteField></Config>".ToXmlView();
-			var d = new GenericDeserializer();
 
-			var tc = d.Deserialize<PrimitiveTypeCollection>(root);
+			var tc = DefaultDeserializer.Instance.Deserialize<PrimitiveTypeCollection>(root);
 
 			Assert.AreEqual("val1", tc.TextField);
 			Assert.AreEqual("val2", tc.TextProp);
@@ -77,9 +75,8 @@ namespace NConfiguration.Serialization
 		{
 			var root =
 @"<Root></Root>".ToXmlView();
-			var d = new GenericDeserializer();
 
-			var tc = d.Deserialize<ComplexTest>(root);
+			var tc = DefaultDeserializer.Instance.Deserialize<ComplexTest>(root);
 
 			CollectionAssert.IsEmpty(tc.Array);
 			CollectionAssert.IsEmpty(tc.Coll);
@@ -92,9 +89,8 @@ namespace NConfiguration.Serialization
 		{
 			var root =
 @"<Root Array='123'></Root>".ToXmlView();
-			var d = new GenericDeserializer();
 
-			var tc = d.Deserialize<ComplexTest>(root);
+			var tc = DefaultDeserializer.Instance.Deserialize<ComplexTest>(root);
 
 			CollectionAssert.AreEqual(new int[] { 123 }, tc.Array);
 		}
@@ -104,9 +100,8 @@ namespace NConfiguration.Serialization
 		{
 			var root =
 @"<root array='123'><array>345</array></root>".ToXmlView();
-			var d = new GenericDeserializer();
 
-			var tc = d.Deserialize<ComplexTest>(root);
+			var tc = DefaultDeserializer.Instance.Deserialize<ComplexTest>(root);
 
 			CollectionAssert.AreEqual(new int[] { 123, 345 }, tc.Array);
 		}
@@ -116,9 +111,8 @@ namespace NConfiguration.Serialization
 		{
 			var root =
 @"<root coll='5'><coll>-5</coll></root>".ToXmlView();
-			var d = new GenericDeserializer();
 
-			var tc = d.Deserialize<ComplexTest>(root);
+			var tc = DefaultDeserializer.Instance.Deserialize<ComplexTest>(root);
 
 			CollectionAssert.AreEqual(new sbyte[] { 5, -5 }, tc.Coll);
 		}
@@ -128,9 +122,8 @@ namespace NConfiguration.Serialization
 		{
 			var root =
 @"<root><inner coll='5'><coll>-5</coll></inner></root>".ToXmlView();
-			var d = new GenericDeserializer();
 
-			var tc = d.Deserialize<ComplexTest>(root);
+			var tc = DefaultDeserializer.Instance.Deserialize<ComplexTest>(root);
 
 			Assert.NotNull(tc.Inner);
 			CollectionAssert.AreEqual(new sbyte[] { 5, -5 }, tc.Inner.Coll);
@@ -141,9 +134,8 @@ namespace NConfiguration.Serialization
 		{
 			var root =
 @"<root><innerlist coll='5'><coll>-5</coll></innerlist><innerlist coll='6'><coll>-6</coll></innerlist></root>".ToXmlView();
-			var d = new GenericDeserializer();
 
-			var tc = d.Deserialize<ComplexTest>(root);
+			var tc = DefaultDeserializer.Instance.Deserialize<ComplexTest>(root);
 
 			CollectionAssert.AreEqual(new sbyte[] { 5, -5 }, tc.InnerList[0].Coll);
 			CollectionAssert.AreEqual(new sbyte[] { 6, -6 }, tc.InnerList[1].Coll);

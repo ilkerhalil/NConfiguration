@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Linq.Expressions;
 using NUnit.Framework;
-using NConfiguration.Serialization.Deserialization;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 
@@ -76,8 +75,7 @@ namespace NConfiguration.Serialization
 		[Test]
 		public void NoInject()
 		{
-			var d = new GenericDeserializer();
-			var tc = d.Deserialize<NoInjectType>(_root);
+			var tc = DefaultDeserializer.Instance.Deserialize<NoInjectType>(_root);
 
 			Assert.AreEqual("PubText", tc.PubText);
 			Assert.AreEqual(null, tc.getPrivField);
@@ -87,8 +85,7 @@ namespace NConfiguration.Serialization
 		[Test]
 		public void InjectField()
 		{
-			var d = new GenericDeserializer();
-			var tc = d.Deserialize<InjectFieldType>(_root);
+			var tc = DefaultDeserializer.Instance.Deserialize<InjectFieldType>(_root);
 
 			Assert.AreEqual("PubText", tc.PubText);
 			Assert.AreEqual("PrivField", tc.getPrivField);
@@ -98,8 +95,7 @@ namespace NConfiguration.Serialization
 		[Test]
 		public void InjectProperty()
 		{
-			var d = new GenericDeserializer();
-			var tc = d.Deserialize<InjectPropertyType>(_root);
+			var tc = DefaultDeserializer.Instance.Deserialize<InjectPropertyType>(_root);
 
 			Assert.AreEqual("PubText", tc.PubText);
 			Assert.AreEqual(null, tc.getPrivField);
@@ -109,8 +105,7 @@ namespace NConfiguration.Serialization
 		[Test]
 		public void InjectAsSerialization()
 		{
-			var d = new GenericDeserializer();
-			var tc = d.Deserialize<InjectAsSerializationType>(_root);
+			var tc = DefaultDeserializer.Instance.Deserialize<InjectAsSerializationType>(_root);
 
 			Assert.AreEqual("PubText", tc.PubText);
 			Assert.AreEqual("PrivField", tc.getPrivField);
@@ -120,8 +115,7 @@ namespace NConfiguration.Serialization
 		[Test]
 		public void PrivateCtor()
 		{
-			var d = new GenericDeserializer();
-			var tc = d.Deserialize<PrivateCtorType>(_root);
+			var tc = DefaultDeserializer.Instance.Deserialize<PrivateCtorType>(_root);
 
 			Assert.AreEqual("PubText", tc.PubText);
 		}

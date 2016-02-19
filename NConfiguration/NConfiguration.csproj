@@ -61,21 +61,12 @@
     <Compile Include="Combination\ICombinerFactory.cs" />
     <Compile Include="ICombinableAppSettings.cs" />
     <Compile Include="DeserializeChildException.cs" />
-    <Compile Include="GenericView\Deserialization\FieldFunctionInfo.cs" />
     <Compile Include="IChangeable.cs" />
     <Compile Include="Joining\FindingSettingsArgs.cs" />
     <Compile Include="Joining\ISettingsFactory.cs" />
     <Compile Include="Monitoring\AsyncComparer.cs" />
     <Compile Include="Monitoring\FileMonitor.cs" />
-    <Compile Include="GenericView\ViewPlainField.cs" />
-    <Compile Include="GenericView\Deserialization\StringMapper.StringMethods.cs">
-      <DependentUpon>StringMapper.StringMethods.tt</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="GenericView\Deserialization\IStringMapper.cs" />
-    <Compile Include="GenericView\Deserialization\StringMapper.cs" />
-    <Compile Include="GenericView\StringConverter.cs" />
+    <Compile Include="Serialization\ViewPlainField.cs" />
     <Compile Include="Json\JsonFileSettings.cs" />
     <Compile Include="Json\JsonFileSettingsLoader.cs" />
     <Compile Include="Json\JsonSettings.cs" />
@@ -92,29 +83,30 @@
     <Compile Include="Monitoring\WatchFileConfig.cs" />
     <Compile Include="Monitoring\WatchMode.cs" />
     <Compile Include="IIdentifiedSource.cs" />
-    <Compile Include="GenericView\Deserialization\AttributeState.cs" />
-    <Compile Include="GenericView\Deserialization\BuildToolkit.cs" />
-    <Compile Include="GenericView\Deserialization\FieldFunctionType.cs" />
-    <Compile Include="GenericView\Deserialization\IGenericMapper.cs" />
-    <Compile Include="GenericView\EnumParsing\IEnumParser_1.cs" />
-    <Compile Include="GenericView\EnumParsing\EnumHelper_1.cs" />
-    <Compile Include="GenericView\EnumParsing\EnumParsers.cs">
+    <Compile Include="Serialization\ComplexFunctionBuilder.cs" />
+    <Compile Include="Serialization\Enums\IEnumParser_1.cs" />
+    <Compile Include="Serialization\Enums\EnumHelper_1.cs" />
+    <Compile Include="Serialization\Enums\EnumParsers.cs">
       <DependentUpon>EnumParsers.tt</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="GenericView\NameComparer.cs" />
+    <Compile Include="Serialization\NameComparer.cs" />
     <Compile Include="Serialization\BuildUtils.cs" />
     <Compile Include="Serialization\ChildDeserializer.cs" />
     <Compile Include="Serialization\DefaultDeserializer.cs" />
+    <Compile Include="Serialization\FieldFunctionInfo.cs" />
+    <Compile Include="Serialization\FieldFunctionType.cs" />
     <Compile Include="Serialization\IDeserializer%271.cs" />
     <Compile Include="Serialization\SerializeExtensions.cs" />
     <Compile Include="Serialization\IDeserializer.cs" />
+    <Compile Include="Serialization\SimpleTypes\Converter.cs" />
+    <Compile Include="Serialization\SimpleTypes\Converter.StringMethods.cs">
+      <DependentUpon>Converter.StringMethods.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="Xml\XmlViewNode.cs" />
-    <Compile Include="GenericView\IGenericDeserializer.cs" />
-    <Compile Include="GenericView\Deserialization\GenericMapper.cs" />
-    <Compile Include="GenericView\Deserialization\ComplexFunctionBuilder.cs" />
-    <Compile Include="GenericView\GenericDeserializer.cs" />
     <Compile Include="Serialization\ICfgNode.cs" />
     <Compile Include="IFilePathOwner.cs" />
     <Compile Include="IAppSettings.cs" />
@@ -152,13 +144,13 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <None Include="GenericView\Deserialization\StringMapper.StringMethods.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>StringMapper.StringMethods.cs</LastGenOutput>
-    </None>
-    <None Include="GenericView\EnumParsing\EnumParsers.tt">
+    <None Include="Serialization\Enums\EnumParsers.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>EnumParsers.cs</LastGenOutput>
+    </None>
+    <None Include="Serialization\SimpleTypes\Converter.StringMethods.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Converter.StringMethods.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>

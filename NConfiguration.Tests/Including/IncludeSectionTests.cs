@@ -41,7 +41,7 @@ namespace NConfiguration.Including
 
 			public IEnumerable<IIdentifiedSource> CreateSettings(IAppSettings source, ICfgNode config)
 			{
-				Configs.Add(Global.GenericDeserializer.Deserialize<IncludeFileConfig>(config));
+				Configs.Add(DefaultDeserializer.Instance.Deserialize<IncludeFileConfig>(config));
 				yield break;
 			}
 

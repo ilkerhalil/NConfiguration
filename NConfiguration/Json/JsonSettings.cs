@@ -9,9 +9,9 @@ namespace NConfiguration.Json
 {
 	public abstract class JsonSettings : IAppSettings
 	{
-		private readonly IGenericDeserializer _deserializer;
+		private readonly IDeserializer _deserializer;
 
-		public JsonSettings(IGenericDeserializer deserializer)
+		public JsonSettings(IDeserializer deserializer)
 		{
 			_deserializer = deserializer;
 		}

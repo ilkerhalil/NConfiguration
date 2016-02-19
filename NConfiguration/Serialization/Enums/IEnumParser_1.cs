@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 
-namespace NConfiguration.Serialization
+namespace NConfiguration.Serialization.Enums
 {
 	internal interface IEnumParser<T> where T: struct
 	{

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace NConfiguration.Serialization.Deserialization
+namespace NConfiguration.Serialization
 {
 	public class FieldFunctionInfo
 	{

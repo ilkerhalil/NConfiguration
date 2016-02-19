@@ -8,9 +8,9 @@ namespace NConfiguration.Ini
 {
 	public abstract class IniSettings : IAppSettings
 	{
-		private readonly IGenericDeserializer _deserializer;
+		private readonly IDeserializer _deserializer;
 
-		public IniSettings(IGenericDeserializer deserializer)
+		public IniSettings(IDeserializer deserializer)
 		{
 			_deserializer = deserializer;
 		}

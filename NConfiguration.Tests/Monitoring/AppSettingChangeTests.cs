@@ -10,6 +10,7 @@ using NConfiguration.Xml;
 using NConfiguration.Tests;
 using NConfiguration.Examples;
 using NConfiguration.Joining;
+using NConfiguration.Serialization;
 
 namespace NConfiguration.Monitoring
 {
@@ -34,7 +35,7 @@ namespace NConfiguration.Monitoring
 			string cfgFile = Path.GetTempFileName();
 			File.WriteAllText(cfgFile, _xmlCfgAutoOrigin);
 
-			var xmlFileLoader = new XmlFileSettingsLoader(Global.GenericDeserializer);
+			var xmlFileLoader = new XmlFileSettingsLoader(DefaultDeserializer.Instance);
 
 			IAppSettings settings = xmlFileLoader.LoadFile(cfgFile);
 			
@@ -66,7 +67,7 @@ namespace NConfiguration.Monitoring
 		[Test]
 		public void MultiChange()
 		{
-			var xmlFileLoader = new XmlFileSettingsLoader(Global.GenericDeserializer);
+			var xmlFileLoader = new XmlFileSettingsLoader(DefaultDeserializer.Instance);
 
 			string cfgMainFile = Path.GetTempFileName();
 			string cfgAdditionalFile = Path.GetTempFileName();

@@ -6,7 +6,6 @@ using System.Linq.Expressions;
 using System.Xml;
 using System.Xml.Serialization;
 using NUnit.Framework;
-using NConfiguration.Serialization.Deserialization;
 using System.Runtime.Serialization;
 
 namespace NConfiguration.Serialization
@@ -57,9 +56,8 @@ namespace NConfiguration.Serialization
 			{
 				var root =
 	@"<Root NInt2='1' Int2='1'><CfgNode2 /><Inner1 /></Root>".ToXmlView();
-				var d = new GenericDeserializer();
 
-				d.Deserialize<TestType1>(root);
+				DefaultDeserializer.Instance.Deserialize<TestType1>(root);
 			}
 			catch (DeserializeChildException ex)
 			{
@@ -75,9 +73,8 @@ namespace NConfiguration.Serialization
 		{
 			var root =
 @"<Root></Root>".ToXmlView();
-			var d = new GenericDeserializer();
 
-			d.Deserialize<TestType1>(root);
+			DefaultDeserializer.Instance.Deserialize<TestType1>(root);
 		}
 
 		[Test]
@@ -86,9 +83,8 @@ namespace NConfiguration.Serialization
 		{
 			var root =
 @"<Root NInt2=''></Root>".ToXmlView();
-			var d = new GenericDeserializer();
 
-			d.Deserialize<TestType1>(root);
+			DefaultDeserializer.Instance.Deserialize<TestType1>(root);
 		}
 
 		[Test]
@@ -97,9 +93,8 @@ namespace NConfiguration.Serialization
 		{
 			var root =
 @"<Root NInt2='' Int2=''></Root>".ToXmlView();
-			var d = new GenericDeserializer();
 
-			d.Deserialize<TestType1>(root);
+			DefaultDeserializer.Instance.Deserialize<TestType1>(root);
 		}
 
 		[Test]
@@ -107,9 +102,8 @@ namespace NConfiguration.Serialization
 		{
 			var root =
 @"<Root NInt=''></Root>".ToXmlView();
-			var d = new GenericDeserializer();
 
-			var t = d.Deserialize<TestType2>(root);
+			var t = DefaultDeserializer.Instance.Deserialize<TestType2>(root);
 
 			Assert.AreEqual(null, t.NInt);
 		}
@@ -119,9 +113,8 @@ namespace NConfiguration.Serialization
 		{
 			var root =
 @"<root ignored='true' nint2='' int2='123' cfgNode2='' ><inner2 NInt=''/></root>".ToXmlView();
-			var d = new GenericDeserializer();
 
-			var t = d.Deserialize<TestType1>(root);
+			var t = DefaultDeserializer.Instance.Deserialize<TestType1>(root);
 
 			Assert.AreEqual(false, t.Ignored);
 

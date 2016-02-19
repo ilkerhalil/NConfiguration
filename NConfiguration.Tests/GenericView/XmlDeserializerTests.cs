@@ -6,7 +6,6 @@ using System.Linq.Expressions;
 using System.Xml;
 using System.Xml.Serialization;
 using NUnit.Framework;
-using NConfiguration.Serialization.Deserialization;
 using System.Runtime.Serialization;
 
 namespace NConfiguration.Serialization
@@ -33,9 +32,8 @@ namespace NConfiguration.Serialization
 		{
 			var root = 
 @"<Root Ignored='true'><xmlNInt>123</xmlNInt></Root>".ToXmlView();
-			var d = new GenericDeserializer();
 
-			var t = d.Deserialize<GoodType>(root);
+			var t = DefaultDeserializer.Instance.Deserialize<GoodType>(root);
 
 			Assert.IsFalse(t.Ignored);
 			Assert.AreEqual(123, t.NInt);
@@ -48,9 +46,8 @@ namespace NConfiguration.Serialization
 		{
 			var root = 
 @"<Root Ignored='1'><xmlInner xmlNInt='321'></xmlInner></Root>".ToXmlView();
-			var d = new GenericDeserializer();
 
-			var t = d.Deserialize<GoodType>(root);
+			var t = DefaultDeserializer.Instance.Deserialize<GoodType>(root);
 
 			Assert.IsFalse(t.Ignored);
 			Assert.IsNotNull(t.Inner);
@@ -62,9 +59,8 @@ namespace NConfiguration.Serialization
 		{
 			var root =
 @"<Root xmlBlob='MTIz'></Root>".ToXmlView();
-			var d = new GenericDeserializer();
 
-			var t = d.Deserialize<GoodType>(root);
+			var t = DefaultDeserializer.Instance.Deserialize<GoodType>(root);
 
 			Assert.That(t.Blob, Is.EquivalentTo(new byte[] {49, 50, 51}));
 		}

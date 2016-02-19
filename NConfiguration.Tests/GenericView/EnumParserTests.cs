@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Linq.Expressions;
 using NUnit.Framework;
-using NConfiguration.Serialization.Deserialization;
+using NConfiguration.Serialization.Enums;
 
 namespace NConfiguration.Serialization
 {

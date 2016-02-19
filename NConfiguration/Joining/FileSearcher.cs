@@ -12,12 +12,12 @@ namespace NConfiguration.Joining
 {
 	public abstract class FileSearcher : ISettingsFactory
 	{
-		protected FileSearcher(IGenericDeserializer deserializer)
+		protected FileSearcher(IDeserializer deserializer)
 		{
 			Deserializer = deserializer;
 		}
 
-		public IGenericDeserializer Deserializer { get; private set; }
+		public IDeserializer Deserializer { get; private set; }
 
 		/// <summary>
 		/// name of including configuration
