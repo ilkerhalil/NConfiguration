@@ -77,56 +77,40 @@ namespace NConfiguration.Serialization
 
 		private Expression CreateFunction(FieldFunctionInfo ffi)
 		{
-			if (ffi.CustomAttributes.Any(o => o is IgnoreDataMemberAttribute))
-			{
-				ffi.Ignore = true;
-				return null;
-			}
-
-			ffi.Function = BuildUtils.DefaultFunctionType(ffi.ResultType);
-
 			var dmAttr = ffi.CustomAttributes.OfType<DataMemberAttribute>().FirstOrDefault();
-
-			if (dmAttr == null && !ffi.IsPublic)
-			{
-				ffi.Ignore = true;
-				return null;
-			}
 			
 			if (dmAttr != null && !string.IsNullOrWhiteSpace(dmAttr.Name))
 				ffi.Name = dmAttr.Name;
 			
 			if (dmAttr != null)
 				ffi.Required = dmAttr.IsRequired;
-			
 
 			return MakeFieldReader(ffi);
 		}
 
 		private Expression MakeFieldReader(FieldFunctionInfo ffi)
 		{
-			switch (ffi.Function)
+			if (!SimpleTypes.Converter.IsPrimitive(ffi.ResultType))
 			{
-				case FieldFunctionType.Array:
+				if (ffi.ResultType.IsArray)
 				{
 					var itemType = ffi.ResultType.GetElementType();
 					var mi = BuildUtils.ToArrayMI.MakeGenericMethod(itemType);
 					return Expression.Call(null, mi, _pDeserializer, Expression.Constant(ffi.Name), _pCfgNode);
-				};
+				}
 
-				case FieldFunctionType.Collection:
+				if (BuildUtils.IsCollection(ffi.ResultType))
 				{
 					var itemType = ffi.ResultType.GetGenericArguments()[0];
 					var mi = BuildUtils.ToListMI.MakeGenericMethod(itemType);
 					return Expression.Call(null, mi, _pDeserializer, Expression.Constant(ffi.Name), _pCfgNode);
-				};
+				}
+			}
 
-				default:
-				{
-					var mi = ffi.Required ? BuildUtils.RequiredFieldMI : BuildUtils.OptionalFieldMI;
-					mi = mi.MakeGenericMethod(ffi.ResultType);
-					return Expression.Call(null, mi, _pDeserializer, Expression.Constant(ffi.Name), _pCfgNode);
-				};
+			{
+				var mi = ffi.Required ? BuildUtils.RequiredFieldMI : BuildUtils.OptionalFieldMI;
+				mi = mi.MakeGenericMethod(ffi.ResultType);
+				return Expression.Call(null, mi, _pDeserializer, Expression.Constant(ffi.Name), _pCfgNode);
 			}
 		}
 
@@ -134,6 +118,16 @@ namespace NConfiguration.Serialization
 		{
 			if (fi.IsInitOnly)
 				return;
+
+			if (fi.IsPrivate)
+			{ // require DataMemberAttribute
+				if (fi.GetCustomAttribute<DataMemberAttribute>() == null)
+					return;
+			}
+
+			if (fi.GetCustomAttribute<IgnoreDataMemberAttribute>() != null)
+				return;
+
 			var right = CreateFunction(new FieldFunctionInfo(fi));
 			if (right == null)
 				return;
@@ -143,8 +137,18 @@ namespace NConfiguration.Serialization
 
 		internal void Add(PropertyInfo pi)
 		{
-			if (!pi.CanWrite)
+			if (!pi.CanWrite || !pi.CanRead)
 				return;
+
+			if (pi.SetMethod.IsPrivate && pi.GetMethod.IsPrivate)
+			{ // require DataMemberAttribute
+				if (pi.GetCustomAttribute<DataMemberAttribute>() == null)
+					return;
+			}
+
+			if (pi.GetCustomAttribute<IgnoreDataMemberAttribute>() != null)
+				return;
+
 			var right = CreateFunction(new FieldFunctionInfo(pi));
 			if (right == null)
 				return;

@@ -98,7 +98,6 @@
     <Compile Include="Serialization\ChildDeserializer.cs" />
     <Compile Include="Serialization\DefaultDeserializer.cs" />
     <Compile Include="Serialization\FieldFunctionInfo.cs" />
-    <Compile Include="Serialization\FieldFunctionType.cs" />
     <Compile Include="Serialization\IDeserializer%271.cs" />
     <Compile Include="Serialization\SerializeExtensions.cs" />
     <Compile Include="Serialization\IDeserializer.cs" />

@@ -31,18 +31,6 @@ namespace NConfiguration.Serialization
 				|| genType == typeof(IEnumerable<>);
 		}
 
-		public static FieldFunctionType DefaultFunctionType(Type type)
-		{
-			if (SimpleTypes.Converter.IsPrimitive(type))
-				return FieldFunctionType.Primitive;
-			else if (type.IsArray)
-				return FieldFunctionType.Array;
-			else if (IsCollection(type))
-				return FieldFunctionType.Collection;
-			else
-				return FieldFunctionType.Complex;
-		}
-
 		private static object TryCreateForComplexType(Type targetType)
 		{
 			try
