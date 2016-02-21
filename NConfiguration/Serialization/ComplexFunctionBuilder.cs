@@ -37,11 +37,18 @@ namespace NConfiguration.Serialization
 			var ci = _targetType.GetConstructor(
 				BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
 				null, new Type[] { }, null);
-				
-			if (ci == null)
-				throw new InvalidOperationException("default constructor not found");
 
-			_bodyList.Add(Expression.Assign(_pResult, Expression.New(ci)));
+			Expression resultInstance;
+
+			if (ci == null)
+			{
+				resultInstance = Expression.Call(typeof(FormatterServices).GetMethod("GetUninitializedObject"), Expression.Constant(_targetType));
+				resultInstance = Expression.Convert(resultInstance, _targetType);
+			}
+			else
+				resultInstance = Expression.New(ci);
+
+			_bodyList.Add(Expression.Assign(_pResult, resultInstance));
 		}
 
 		public object Compile()

@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace NConfiguration.Serialization
 {
-	public interface IDeserializer
+	public interface IDeserializerFactory
 	{
-		T Deserialize<T>(IDeserializer context, ICfgNode cfgNode);
+		object CreateInstance(Type targetType);
 	}
 }

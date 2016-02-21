@@ -65,8 +65,16 @@ namespace NConfiguration.Serialization
 
 		private static object TryCreateAsAttribute(Type targetType)
 		{
-			//UNDONE
-			return null;
+			var deserializeAttr = targetType.GetCustomAttributes(false).OfType<IDeserializerFactory>().SingleOrDefault();
+
+			if (deserializeAttr == null)
+				return null;
+
+			var deserializer = deserializeAttr.CreateInstance(targetType);
+
+			var mi = typeof(IDeserializer<>).MakeGenericType(targetType).GetMethod("Deserialize");
+			var funcType = typeof(Deserialize<>).MakeGenericType(targetType);
+			return Delegate.CreateDelegate(funcType, deserializer, mi);
 		}
 
 		private static object TryCreateNativeFunction(Type targetType)

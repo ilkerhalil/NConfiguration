@@ -66,6 +66,8 @@
     <Compile Include="Joining\ISettingsFactory.cs" />
     <Compile Include="Monitoring\AsyncComparer.cs" />
     <Compile Include="Monitoring\FileMonitor.cs" />
+    <Compile Include="Serialization\DeserializerAttribute.cs" />
+    <Compile Include="Serialization\IDeserializerFactory.cs" />
     <Compile Include="Serialization\ViewPlainField.cs" />
     <Compile Include="Json\JsonFileSettings.cs" />
     <Compile Include="Json\JsonFileSettingsLoader.cs" />
