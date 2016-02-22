@@ -75,21 +75,15 @@ namespace NConfiguration.Serialization
 			_bodyList.Add(callEndInit);
 		}
 
-		private Expression CreateFunction(FieldFunctionInfo ffi)
-		{
-			var dmAttr = ffi.CustomAttributes.OfType<DataMemberAttribute>().FirstOrDefault();
-			
-			if (dmAttr != null && !string.IsNullOrWhiteSpace(dmAttr.Name))
-				ffi.Name = dmAttr.Name;
-			
-			if (dmAttr != null)
-				ffi.Required = dmAttr.IsRequired;
-
-			return MakeFieldReader(ffi);
-		}
-
 		private Expression MakeFieldReader(FieldFunctionInfo ffi)
 		{
+			if (ffi.DeserializerFactory != null)
+			{
+				var mi = BuildUtils.CustomFieldMI.MakeGenericMethod(ffi.ResultType);
+				var customDeserializer = Expression.Constant(ffi.DeserializerFactory.CreateInstance(ffi.ResultType));
+				return Expression.Call(null, mi, _pDeserializer, customDeserializer, Expression.Constant(ffi.Name), _pCfgNode, Expression.Constant(ffi.Required));
+			}
+
 			if (!SimpleTypes.Converter.IsPrimitive(ffi.ResultType))
 			{
 				if (ffi.ResultType.IsArray)
@@ -108,9 +102,8 @@ namespace NConfiguration.Serialization
 			}
 
 			{
-				var mi = ffi.Required ? BuildUtils.RequiredFieldMI : BuildUtils.OptionalFieldMI;
-				mi = mi.MakeGenericMethod(ffi.ResultType);
-				return Expression.Call(null, mi, _pDeserializer, Expression.Constant(ffi.Name), _pCfgNode);
+				var mi = BuildUtils.ReadFieldMI.MakeGenericMethod(ffi.ResultType);
+				return Expression.Call(null, mi, _pDeserializer, Expression.Constant(ffi.Name), _pCfgNode, Expression.Constant(ffi.Required));
 			}
 		}
 
@@ -128,7 +121,7 @@ namespace NConfiguration.Serialization
 			if (fi.GetCustomAttribute<IgnoreDataMemberAttribute>() != null)
 				return;
 
-			var right = CreateFunction(new FieldFunctionInfo(fi));
+			var right = MakeFieldReader(new FieldFunctionInfo(fi));
 			if (right == null)
 				return;
 			var left = Expression.Field(_pResult, fi);
@@ -149,7 +142,7 @@ namespace NConfiguration.Serialization
 			if (pi.GetCustomAttribute<IgnoreDataMemberAttribute>() != null)
 				return;
 
-			var right = CreateFunction(new FieldFunctionInfo(pi));
+			var right = MakeFieldReader(new FieldFunctionInfo(pi));
 			if (right == null)
 				return;
 			var left = Expression.Property(_pResult, pi);

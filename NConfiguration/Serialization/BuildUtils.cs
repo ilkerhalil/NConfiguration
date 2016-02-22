@@ -80,16 +80,21 @@ namespace NConfiguration.Serialization
 			return node;
 		}
 
-		internal static readonly MethodInfo OptionalFieldMI = GetMethod("OptionalField");
-		internal static T OptionalField<T>(IDeserializer context, string name, ICfgNode node)
+		internal static readonly MethodInfo CustomFieldMI = GetMethod("CustomField");
+		internal static T CustomField<T>(IDeserializer context, IDeserializer<T> custom, string name, ICfgNode node, bool required)
 		{
 			try
 			{
 				var field = node.NestedByName(name).FirstOrDefault();
 				if (field == null)
-					return default(T);
+				{
+					if (required)
+						throw new FormatException("field not found");
+					else
+						return default(T);
+				}
 
-				return context.Deserialize<T>(context, field);
+				return custom.Deserialize(context, field);
 			}
 			catch (Exception ex)
 			{
@@ -97,14 +102,19 @@ namespace NConfiguration.Serialization
 			}
 		}
 
-		internal static readonly MethodInfo RequiredFieldMI = GetMethod("RequiredField");
-		internal static T RequiredField<T>(IDeserializer context, string name, ICfgNode node)
+		internal static readonly MethodInfo ReadFieldMI = GetMethod("ReadField");
+		internal static T ReadField<T>(IDeserializer context, string name, ICfgNode node, bool required)
 		{
 			try
 			{
 				var field = node.NestedByName(name).FirstOrDefault();
 				if (field == null)
-					throw new FormatException("field not found");
+				{
+					if (required)
+						throw new FormatException("field not found");
+					else
+						return default(T);
+				}
 
 				return context.Deserialize<T>(context, field);
 			}
