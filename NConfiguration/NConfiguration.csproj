@@ -59,6 +59,7 @@
     <Compile Include="Combination\ICombiner.cs" />
     <Compile Include="Combination\ICombiner%271.cs" />
     <Compile Include="Combination\ICombinerFactory.cs" />
+    <Compile Include="IConfigNodeProvider.cs" />
     <Compile Include="SingleAppSettings.cs" />
     <Compile Include="IAppSettings_new.cs" />
     <Compile Include="ICombinableAppSettings.cs" />

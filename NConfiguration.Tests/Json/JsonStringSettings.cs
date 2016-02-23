@@ -26,11 +26,9 @@ namespace NConfiguration.Json
 			_obj = (JObject)val;
 		}
 
-		protected override IEnumerable<JValue> GetValue(string name)
+		protected override JObject Root
 		{
-			return _obj.Properties
-				.Where(p => p.Key == name)
-				.Select(p => p.Value);
+			get { return _obj; }
 		}
 	}
 }

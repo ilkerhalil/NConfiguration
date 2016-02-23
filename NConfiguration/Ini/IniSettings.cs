@@ -6,7 +6,7 @@ using NConfiguration.Serialization;
 
 namespace NConfiguration.Ini
 {
-	public abstract class IniSettings : IAppSettings
+	public abstract class IniSettings : IAppSettings, IConfigNodeProvider
 	{
 		private readonly IDeserializer _deserializer;
 
@@ -32,6 +32,18 @@ namespace NConfiguration.Ini
 				if (section.Name == string.Empty)
 					foreach(var pair in section.Pairs.Where(p => NameComparer.Equals(p.Key, sectionName)))
 						yield return _deserializer.Deserialize<T>(new ViewPlainField(pair.Value));
+			}
+		}
+
+		public IEnumerable<KeyValuePair<string, ICfgNode>> GetNodes()
+		{
+			foreach (var section in Sections)
+			{
+				if (section.Name == string.Empty)
+					foreach (var pair in section.Pairs)
+						yield return new KeyValuePair<string, ICfgNode>(pair.Key, new ViewPlainField(pair.Value));
+				else
+					yield return new KeyValuePair<string, ICfgNode>(section.Name, new ViewSection(section));
 			}
 		}
 	}

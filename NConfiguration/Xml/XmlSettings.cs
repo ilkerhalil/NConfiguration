@@ -14,7 +14,7 @@ namespace NConfiguration.Xml
 	/// <summary>
 	/// This settings loaded from a XML document
 	/// </summary>
-	public abstract class XmlSettings : IXmlEncryptable, IAppSettings
+	public abstract class XmlSettings : IXmlEncryptable, IConfigNodeProvider
 	{
 		private static readonly XNamespace cryptDataNS = XNamespace.Get("http://www.w3.org/2001/04/xmlenc#");
 
@@ -96,6 +96,18 @@ namespace NConfiguration.Xml
 
 			foreach (var el in Root.Elements().Where(e => NameComparer.Equals(name, e.Name.LocalName)))
 				yield return _deserializer.Deserialize<T>(new XmlViewNode(Decrypt(el)));
+		}
+
+		public IEnumerable<KeyValuePair<string, ICfgNode>> GetNodes()
+		{
+			if (Root == null)
+				yield break;
+
+			foreach (var at in Root.Attributes())
+				yield return new KeyValuePair<string, ICfgNode>(at.Name.LocalName, new ViewPlainField(at.Value));
+
+			foreach (var el in Root.Elements())
+				yield return new KeyValuePair<string, ICfgNode>(el.Name.LocalName, new XmlViewNode(Decrypt(el)));
 		}
 	}
 }

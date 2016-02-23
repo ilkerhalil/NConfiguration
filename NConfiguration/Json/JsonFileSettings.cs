@@ -42,11 +42,9 @@ namespace NConfiguration.Json
 			}
 		}
 
-		protected override IEnumerable<JValue> GetValue(string name)
+		protected override JObject Root
 		{
-			return _obj.Properties
-				.Where(p => NameComparer.Equals(p.Key, name))
-				.Select(p => p.Value);
+			get { return _obj; }
 		}
 
 		/// <summary>
