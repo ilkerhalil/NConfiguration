@@ -10,7 +10,7 @@ namespace NConfiguration.Ini
 	/// <summary>
 	/// The mapping section in INI-document to nodes of configuration
 	/// </summary>
-	public class ViewSection: ICfgNode
+	public class ViewSection: CfgNode
 	{
 		private List<KeyValuePair<string, string>> _pairs;
 
@@ -24,24 +24,15 @@ namespace NConfiguration.Ini
 			_pairs = section.Pairs;
 		}
 
-		public string Text
+		public override string GetNodeText()
 		{
-			get
-			{
-				throw new NotSupportedException("section can't contain value");
-			}
+			throw new NotSupportedException("section can't contain value");
 		}
 
-		/// <summary>
-		/// Gets all the child nodes with their names.
-		/// </summary>
-		public IEnumerable<KeyValuePair<string, ICfgNode>> Nested
+		public override IEnumerable<KeyValuePair<string, ICfgNode>> GetNestedNodes()
 		{
-			get
-			{
-				foreach (var pair in _pairs)
-					yield return new KeyValuePair<string, ICfgNode>(pair.Key, new ViewPlainField(pair.Value));
-			}
+			foreach (var pair in _pairs)
+				yield return new KeyValuePair<string, ICfgNode>(pair.Key, new ViewPlainField(pair.Value));
 		}
 	}
 }

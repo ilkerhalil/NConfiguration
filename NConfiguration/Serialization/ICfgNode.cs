@@ -5,7 +5,7 @@ namespace NConfiguration.Serialization
 	/// <summary>
 	/// A node in the document of configuration
 	/// </summary>
-	public interface ICfgNode
+	public interface ICfgNode //UNDONE move to NConfiguration ns
 	{
 		/// <summary>
 		/// Gets all the child nodes with their names.

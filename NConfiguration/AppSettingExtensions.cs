@@ -13,7 +13,6 @@ namespace NConfiguration
 	/// </summary>
 	public static class AppSettingExtensions
 	{
-
 		internal static string GetIdentitySource(this IAppSettings settings, string defaultIdentity)
 		{
 			var result = settings.TryFirst<string>("Identity");
@@ -32,27 +31,20 @@ namespace NConfiguration
 		}
 
 		/// <summary>
-		/// Gets the name of the section in DataContractAttribute or XmlRootAttribute or class name
+		/// Gets the name of the section in DataContractAttribute or class name
 		/// </summary>
 		/// <returns>The section name.</returns>
 		/// <typeparam name='T'>type of configuration</typeparam>
 		public static string GetSectionName<T>()
 		{
-			var dataAttr = typeof(T).GetCustomAttributes(typeof(DataContractAttribute), false)
-				.Select(a => a as DataContractAttribute)
-				.FirstOrDefault(a => a != null);
+			var dataAttrName = typeof(T).GetCustomAttributes(typeof(DataContractAttribute), false)
+				.Select(a => (a as DataContractAttribute).Name)
+				.FirstOrDefault();
 
-			if (dataAttr != null)
-				return dataAttr.Name;
-
-			var xmlAttr = typeof(T).GetCustomAttributes(typeof(XmlRootAttribute), false)
-				.Select(a => a as XmlRootAttribute)
-				.FirstOrDefault(a => a != null);
-
-			if (xmlAttr != null)
-				return xmlAttr.ElementName;
-
-			return typeof(T).Name;
+			if(string.IsNullOrWhiteSpace(dataAttrName))
+				return typeof(T).Name;
+			else
+				return dataAttrName;
 		}
 		
 		/// <summary>

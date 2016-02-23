@@ -9,7 +9,7 @@ namespace NConfiguration.Xml
 	/// <summary>
 	/// The mapping XML-document to nodes of configuration
 	/// </summary>
-	public class XmlViewNode: ICfgNode
+	public class XmlViewNode : CfgNode
 	{
 		private XElement _element;
 
@@ -21,23 +21,21 @@ namespace NConfiguration.Xml
 		public XmlViewNode(XElement element)
 		{
 			_element = element;
-			Text = _element.Value;
 		}
 
-		public string Text { get; private set; }
-
-		public IEnumerable<KeyValuePair<string, ICfgNode>> Nested
+		public override string GetNodeText()
 		{
-			get
-			{
-				foreach (var attr in _element.Attributes())
-					yield return new KeyValuePair<string, ICfgNode>(attr.Name.LocalName, new ViewPlainField(attr.Value));
-
-				foreach (var el in _element.Elements())
-					yield return new KeyValuePair<string, ICfgNode>(el.Name.LocalName, new XmlViewNode(el));
-			}
+			return _element.Value;
 		}
 
+		public override IEnumerable<KeyValuePair<string, ICfgNode>> GetNestedNodes()
+		{
+			foreach (var attr in _element.Attributes())
+				yield return new KeyValuePair<string, ICfgNode>(attr.Name.LocalName, new ViewPlainField(attr.Value));
+
+			foreach (var el in _element.Elements())
+				yield return new KeyValuePair<string, ICfgNode>(el.Name.LocalName, new XmlViewNode(el));
+		}
 	}
 }
 

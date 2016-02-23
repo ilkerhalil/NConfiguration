@@ -10,7 +10,7 @@ namespace NConfiguration.Json
 	/// <summary>
 	/// The mapping JSON-document to nodes of configuration
 	/// </summary>
-	public class ViewObject: ICfgNode
+	public class ViewObject : CfgNode
 	{
 		private JObject _obj;
 
@@ -22,27 +22,6 @@ namespace NConfiguration.Json
 		public ViewObject(JObject obj)
 		{
 			_obj = obj;
-		}
-
-		public IEnumerable<KeyValuePair<string, ICfgNode>> Nested
-		{
-			get
-			{
-				foreach (var el in _obj.Properties)
-					foreach (var val in FlatArray(el.Value))
-						yield return new KeyValuePair<string, ICfgNode>(el.Key, CreateByJsonValue(val));
-			}
-		}
-
-		/// <summary>
-		/// Throw NotSupportedException.
-		/// </summary>
-		public string Text
-		{
-			get
-			{
-				throw new NotSupportedException("JSON document can't contain value");
-			}
 		}
 
 		internal static ICfgNode CreateByJsonValue(JValue val)
@@ -86,6 +65,18 @@ namespace NConfiguration.Json
 					yield return innerItem;
 				}
 			}
+		}
+
+		public override string GetNodeText()
+		{
+			throw new NotSupportedException("JSON document can't contain value");
+		}
+
+		public override IEnumerable<KeyValuePair<string, ICfgNode>> GetNestedNodes()
+		{
+			foreach (var el in _obj.Properties)
+				foreach (var val in FlatArray(el.Value))
+					yield return new KeyValuePair<string, ICfgNode>(el.Key, CreateByJsonValue(val));
 		}
 	}
 }

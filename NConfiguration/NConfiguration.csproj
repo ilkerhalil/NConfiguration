@@ -59,6 +59,8 @@
     <Compile Include="Combination\ICombiner.cs" />
     <Compile Include="Combination\ICombiner%271.cs" />
     <Compile Include="Combination\ICombinerFactory.cs" />
+    <Compile Include="SingleAppSettings.cs" />
+    <Compile Include="IAppSettings_new.cs" />
     <Compile Include="ICombinableAppSettings.cs" />
     <Compile Include="DeserializeChildException.cs" />
     <Compile Include="IChangeable.cs" />
@@ -107,6 +109,7 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
+    <Compile Include="CfgNode.cs" />
     <Compile Include="Xml\XmlViewNode.cs" />
     <Compile Include="Serialization\ICfgNode.cs" />
     <Compile Include="IFilePathOwner.cs" />

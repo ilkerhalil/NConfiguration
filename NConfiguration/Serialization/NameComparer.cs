@@ -5,7 +5,7 @@ using System.Text;
 
 namespace NConfiguration.Serialization
 {
-	internal class NameComparer
+	internal class NameComparer // UNDONE move to NConfiguration ns
 	{
 		public static readonly IEqualityComparer<string> Instance = StringComparer.OrdinalIgnoreCase;
 
