@@ -16,10 +16,7 @@ namespace NConfiguration.Xml
 	/// </summary>
 	public abstract class XmlSettings : IXmlEncryptable, IConfigNodeProvider
 	{
-		private static readonly XNamespace cryptDataNS = XNamespace.Get("http://www.w3.org/2001/04/xmlenc#");
-
 		private readonly IDeserializer _deserializer;
-		private IProviderCollection _providers = null;
 
 		/// <summary>
 		/// XML root element that contains all the configuration section
@@ -34,48 +31,7 @@ namespace NConfiguration.Xml
 			_deserializer = deserializer;
 		}
 
-		private XElement Decrypt(XElement el)
-		{
-			if (el == null)
-				return null;
-
-			var attr = el.Attribute("configProtectionProvider");
-			if (attr == null)
-				return el;
-
-			if (_providers == null)
-				throw new InvalidOperationException("protection providers not configured");
-
-			var provider = _providers.Get(attr.Value);
-			if (provider == null)
-				throw new InvalidOperationException(string.Format("protection provider `{0}' not found", attr.Value));
-
-			var encData = el.Element(cryptDataNS + "EncryptedData");
-			if (encData == null)
-				throw new FormatException(string.Format("element `EncryptedData' not found in element `{0}'", el.Name));
-
-			var xmlEncData = encData.ToXmlElement();
-			XmlElement xmlData;
-
-			try
-			{
-				xmlData = (XmlElement)provider.Decrypt(xmlEncData);
-			}
-			catch (SystemException sex)
-			{
-				throw new CryptographicException(string.Format("can't decrypt the configuration section `{0}'", encData.Name), sex);
-			}
-
-			return xmlData.ToXElement();
-		}
-
-		/// <summary>
-		/// Sets the collection providers to decrypt XML sections
-		/// </summary>
-		public void SetProviderCollection(IProviderCollection collection)
-		{
-			_providers = collection;
-		}
+		public IProviderCollection Providers { get; set; }
 
 		/// <summary>
 		/// Returns a collection of instances of configurations
@@ -95,7 +51,7 @@ namespace NConfiguration.Xml
 
 
 			foreach (var el in Root.Elements().Where(e => NameComparer.Equals(name, e.Name.LocalName)))
-				yield return _deserializer.Deserialize<T>(new XmlViewNode(Decrypt(el)));
+				yield return _deserializer.Deserialize<T>(new XmlViewNode(this, el));
 		}
 
 		public IEnumerable<KeyValuePair<string, ICfgNode>> GetNodes()
@@ -107,7 +63,7 @@ namespace NConfiguration.Xml
 				yield return new KeyValuePair<string, ICfgNode>(at.Name.LocalName, new ViewPlainField(at.Value));
 
 			foreach (var el in Root.Elements())
-				yield return new KeyValuePair<string, ICfgNode>(el.Name.LocalName, new XmlViewNode(Decrypt(el)));
+				yield return new KeyValuePair<string, ICfgNode>(el.Name.LocalName, new XmlViewNode(this, el));
 		}
 	}
 }

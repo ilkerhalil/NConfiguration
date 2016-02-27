@@ -162,7 +162,15 @@ iaWGZaw==
 			var providers = ProviderLoader.FromAppSettings(settings).Providers;
 			var cryptedsettings = EncryptedCfg.ToXmlSettings(providers);
 
-			Assert.Throws<CryptographicException>(() => cryptedsettings.First<MyXmlConfig>());
+			try
+			{
+				cryptedsettings.First<MyXmlConfig>();
+				Assert.Fail("expected exception");
+			}
+			catch(DeserializeChildException ex)
+			{
+				Assert.IsInstanceOf<CryptographicException>(ex.InnerException);
+			}
 		}
 
 		[Test]

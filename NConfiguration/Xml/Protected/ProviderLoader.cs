@@ -191,7 +191,7 @@ namespace NConfiguration.Xml.Protected
 
 			var encr = e.Settings as IXmlEncryptable;
 			if(encr != null)
-				encr.SetProviderCollection(Providers);
+				encr.Providers = Providers;
 		}
 	}
 }

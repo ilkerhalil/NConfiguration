@@ -11,8 +11,8 @@ namespace NConfiguration.Xml.Protected
 	public interface IXmlEncryptable
 	{
 		/// <summary>
-		/// Sets the collection providers to decrypt XML sections
+		/// the collection providers to decrypt XML sections
 		/// </summary>
-		void SetProviderCollection(IProviderCollection collection);
+		IProviderCollection Providers { get; set; }
 	}
 }

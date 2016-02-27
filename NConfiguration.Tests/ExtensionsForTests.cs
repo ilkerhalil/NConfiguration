@@ -13,7 +13,7 @@ namespace NConfiguration
 	{
 		public static ICfgNode ToXmlView(this XDocument doc)
 		{
-			return new XmlViewNode(doc.Root);
+			return new XmlViewNode(null, doc.Root);
 		}
 
 		public static IIdentifiedSource ToXmlSettings(this string text)
@@ -34,7 +34,7 @@ namespace NConfiguration
 		public static IIdentifiedSource ToXmlSettings(this string text, IProviderCollection providers)
 		{
 			var settings = new XmlStringSettings(text);
-			settings.SetProviderCollection(providers);
+			settings.Providers = providers;
 			return settings;
 		}
 
