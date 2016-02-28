@@ -3,6 +3,7 @@ using System.Runtime.Serialization;
 
 namespace NConfiguration.Joining
 {
+	[DataContract(Name = "IncludeFile")]
 	public class IncludeFileConfig
 	{
 		[DataMember(Name = "Path", IsRequired = true)]

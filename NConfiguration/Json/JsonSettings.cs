@@ -7,7 +7,7 @@ using NConfiguration.Json.Parsing;
 
 namespace NConfiguration.Json
 {
-	public abstract class JsonSettings : IAppSettings, IConfigNodeProvider
+	public abstract class JsonSettings : ConfigNodeProvider, IAppSettings
 	{
 		private readonly IDeserializer _deserializer;
 
@@ -30,7 +30,7 @@ namespace NConfiguration.Json
 					yield return _deserializer.Deserialize<T>(ViewObject.CreateByJsonValue(item));
 		}
 
-		public IEnumerable<KeyValuePair<string, ICfgNode>> GetNodes()
+		protected override IEnumerable<KeyValuePair<string, ICfgNode>> GetAllNodes()
 		{
 			foreach (var pair in Root.Properties)
 				foreach (var item in ViewObject.FlatArray(pair.Value))

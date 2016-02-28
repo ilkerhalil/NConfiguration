@@ -59,7 +59,12 @@
     <Compile Include="Combination\ICombiner.cs" />
     <Compile Include="Combination\ICombiner%271.cs" />
     <Compile Include="Combination\ICombinerFactory.cs" />
+    <Compile Include="ConfigNodeProvider2.cs" />
+    <Compile Include="ConfigNodeProvider.cs" />
     <Compile Include="IConfigNodeProvider.cs" />
+    <Compile Include="Joining\IIncludeHandler.cs" />
+    <Compile Include="Joining\MultiSettings_new.cs" />
+    <Compile Include="Joining\SettingsLoader_new.cs" />
     <Compile Include="SingleAppSettings.cs" />
     <Compile Include="IAppSettings_new.cs" />
     <Compile Include="ICombinableAppSettings.cs" />

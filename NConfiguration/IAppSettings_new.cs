@@ -9,7 +9,7 @@ namespace NConfiguration
 	/// </summary>
 	public interface IAppSettings_new //UNDONE rename
 	{
-		IEnumerable<ICfgNode> GetSection(string sectionName);
+		IConfigNodeProvider Nodes { get; }
 
 		IDeserializer Deserializer { get; }
 

@@ -14,7 +14,7 @@ namespace NConfiguration.Xml
 	/// <summary>
 	/// This settings loaded from a XML document
 	/// </summary>
-	public abstract class XmlSettings : IXmlEncryptable, IConfigNodeProvider
+	public abstract class XmlSettings : ConfigNodeProvider, IXmlEncryptable
 	{
 		private readonly IDeserializer _deserializer;
 
@@ -54,7 +54,7 @@ namespace NConfiguration.Xml
 				yield return _deserializer.Deserialize<T>(new XmlViewNode(this, el));
 		}
 
-		public IEnumerable<KeyValuePair<string, ICfgNode>> GetNodes()
+		protected override IEnumerable<KeyValuePair<string, ICfgNode>> GetAllNodes()
 		{
 			if (Root == null)
 				yield break;

@@ -6,6 +6,8 @@ namespace NConfiguration
 {
 	public interface IConfigNodeProvider
 	{
-		IEnumerable<KeyValuePair<string, ICfgNode>> GetNodes();
+		IReadOnlyList<KeyValuePair<string, ICfgNode>> Items { get; }
+
+		IEnumerable<ICfgNode> ByName(string sectionName);
 	}
 }

@@ -6,7 +6,7 @@ using NConfiguration.Serialization;
 
 namespace NConfiguration.Ini
 {
-	public abstract class IniSettings : IAppSettings, IConfigNodeProvider
+	public abstract class IniSettings : ConfigNodeProvider, IAppSettings
 	{
 		private readonly IDeserializer _deserializer;
 
@@ -35,7 +35,7 @@ namespace NConfiguration.Ini
 			}
 		}
 
-		public IEnumerable<KeyValuePair<string, ICfgNode>> GetNodes()
+		protected override IEnumerable<KeyValuePair<string, ICfgNode>> GetAllNodes()
 		{
 			foreach (var section in Sections)
 			{

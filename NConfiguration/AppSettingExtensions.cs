@@ -37,12 +37,22 @@ namespace NConfiguration
 		/// <typeparam name='T'>type of configuration</typeparam>
 		public static string GetSectionName<T>()
 		{
-			var dataAttrName = typeof(T).GetCustomAttributes(typeof(DataContractAttribute), false)
+			return typeof(T).GetSectionName();
+		}
+
+		/// <summary>
+		/// Gets the name of the section in DataContractAttribute or class name
+		/// </summary>
+		/// <returns>The section name.</returns>
+		/// <typeparam name='T'>type of configuration</typeparam>
+		public static string GetSectionName(this Type type)
+		{
+			var dataAttrName = type.GetCustomAttributes(typeof(DataContractAttribute), false)
 				.Select(a => (a as DataContractAttribute).Name)
 				.FirstOrDefault();
 
 			if(string.IsNullOrWhiteSpace(dataAttrName))
-				return typeof(T).Name;
+				return type.Name;
 			else
 				return dataAttrName;
 		}
