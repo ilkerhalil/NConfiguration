@@ -68,9 +68,23 @@ namespace NConfiguration.Joining
 		{
 			foreach(var pair in source.Items)
 			{
-				var includeSettings = TryGetIncludeSettings(source, pair.Key, pair.Value);
-				if (includeSettings == null)
+				if (NameComparer.Equals(pair.Key, AppSettingExtensions.IdentitySectionName) ||
+					NameComparer.Equals(pair.Key, AppSettingExtensions.WatchFileSectionName))
+					continue;
+
+				List<Include> hadlers;
+				if (!_includeHandlers.TryGetValue(pair.Key, out hadlers))
+				{
 					yield return pair;
+					continue;
+				}
+
+				var includeSettings = hadlers
+					.Select(_ => _(source, pair.Value))
+					.FirstOrDefault(_ => _ != null);
+
+				if (includeSettings == null)
+					throw new NotSupportedException("any registered handlers returned null");
 
 				foreach (var cnProvider in includeSettings)
 				{
@@ -84,17 +98,6 @@ namespace NConfiguration.Joining
 						yield return includePair;
 				}
 			}
-		}
-
-		private IEnumerable<IIdentifiedSource> TryGetIncludeSettings(IIdentifiedSource source, string name, ICfgNode cfgNode)
-		{
-			List<Include> hadlers;
-			if (!_includeHandlers.TryGetValue(name, out hadlers))
-				return null;
-
-			return hadlers
-				.Select(_ => _(source, cfgNode))
-				.FirstOrDefault(_ => _ != null);
 		}
 
 		private bool CheckLoaded(IIdentifiedSource settings)

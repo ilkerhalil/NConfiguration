@@ -28,11 +28,55 @@ namespace NConfiguration.Joining
 
 		public event EventHandler<FindingSettingsArgs> FindingSettings;
 
-		private void OnFindingSettings(IAppSettings source, IncludeFileConfig cfg)
+		private void OnFindingSettings(IConfigNodeProvider source, IncludeFileConfig cfg)
 		{
 			var copy = FindingSettings;
 			if (copy != null)
 				copy(this, new FindingSettingsArgs(source, cfg));
+		}
+
+		/// <summary>
+		/// creates a collection of includes configuration
+		/// </summary>
+		/// <param name="source">parent settings</param>
+		/// <param name="config">include configuration node</param>
+		/// <returns>collection of includes configuration</returns>
+		public IEnumerable<IIdentifiedSource> CreateSettings(IConfigNodeProvider source, IncludeFileConfig cfg)
+		{
+			var rpo = source as IFilePathOwner;
+
+			OnFindingSettings(source, cfg);
+
+			if (Path.IsPathRooted(cfg.Path))
+			{
+				if (!File.Exists(cfg.Path) && !cfg.Required)
+					yield break;
+
+				yield return CreateFileSetting(cfg.Path);
+				yield break;
+			}
+
+			// relative path
+			if (rpo == null)
+				throw new InvalidOperationException("can not be searched for a relative path because the settings do not provide an absolute path");
+
+			var found = SearchSettings(rpo.Path, cfg.Path, cfg.Search);
+
+			if (found.Count == 0)
+			{
+				if (cfg.Required)
+					throw new ApplicationException(string.Format("configuration file '{0}' not found in '{1}'", cfg.Path, rpo.Path));
+
+				yield break;
+			}
+
+			if (cfg.Include == IncludeMode.First)
+				yield return found.First();
+			else if (cfg.Include == IncludeMode.Last)
+				yield return found.Last();
+			else
+				foreach (var item in found)
+					yield return item;
 		}
 
 		/// <summary>
@@ -46,7 +90,7 @@ namespace NConfiguration.Joining
 			var rpo = source as IFilePathOwner;
 			var cfg = Deserializer.Deserialize<IncludeFileConfig>(config);
 
-			OnFindingSettings(source, cfg);
+			//OnFindingSettings(source, cfg);
 
 			if (Path.IsPathRooted(cfg.Path))
 			{

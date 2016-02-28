@@ -13,15 +13,19 @@ namespace NConfiguration
 	/// </summary>
 	public static class AppSettingExtensions
 	{
+		internal static readonly string IdentitySectionName = "Identity";
+
+		internal static readonly string WatchFileSectionName = "WatchFile";
+
 		internal static string GetIdentitySource(this IAppSettings settings, string defaultIdentity)
 		{
-			var result = settings.TryFirst<string>("Identity");
+			var result = settings.TryFirst<string>(IdentitySectionName);
 			return string.IsNullOrWhiteSpace(result) ? defaultIdentity : result;
 		}
 
 		internal static FileMonitor GetMonitoring(this IAppSettings settings, string fileName, byte[] expectedContent)
 		{
-			var cfg = settings.TryFirst<WatchFileConfig>();
+			var cfg = settings.TryFirst<WatchFileConfig>(WatchFileSectionName);
 			if (cfg == null)
 				return null;
 			if (cfg.Mode == WatchMode.None)

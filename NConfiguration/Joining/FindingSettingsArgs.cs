@@ -10,10 +10,10 @@ namespace NConfiguration.Joining
 {
 	public class FindingSettingsArgs : EventArgs
 	{
-		public IAppSettings Source { get; private set; }
+		public IConfigNodeProvider Source { get; private set; }
 		public IncludeFileConfig IncludeFile { get; private set; }
 
-		public FindingSettingsArgs(IAppSettings source, IncludeFileConfig cfg)
+		public FindingSettingsArgs(IConfigNodeProvider source, IncludeFileConfig cfg)
 		{
 			Source = source;
 			IncludeFile = cfg;
