@@ -6,7 +6,7 @@ using NConfiguration.Serialization;
 
 namespace NConfiguration.Ini
 {
-	public abstract class IniSettings : ConfigNodeProvider, IAppSettings
+	public abstract class IniSettings : CachedConfigNodeProvider, IAppSettings
 	{
 		private readonly IDeserializer _deserializer;
 

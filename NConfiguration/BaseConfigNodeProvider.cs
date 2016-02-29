@@ -7,20 +7,11 @@ using System.Threading.Tasks;
 
 namespace NConfiguration
 {
-	public class ConfigNodeProvider2 : IConfigNodeProvider
+	public abstract class BaseConfigNodeProvider : IConfigNodeProvider
 	{
-		private IReadOnlyList<KeyValuePair<string, ICfgNode>> _items;
-		private Dictionary<string, List<ICfgNode>> _index;
-
-		public ConfigNodeProvider2(IReadOnlyList<KeyValuePair<string, ICfgNode>> items)
+		protected Dictionary<string, List<ICfgNode>> CreateIndex()
 		{
-			Items = items;
-			_index = CreateIndex();
-		}
-
-		private Dictionary<string, List<ICfgNode>> CreateIndex()
-		{
-			var result = new Dictionary<string, List<ICfgNode>>();
+			var result = new Dictionary<string, List<ICfgNode>>(NameComparer.Instance);
 
 			List<ICfgNode> nodes;
 			foreach (var section in Items)
@@ -36,12 +27,14 @@ namespace NConfiguration
 			return result;
 		}
 
-		public IReadOnlyList<KeyValuePair<string, Serialization.ICfgNode>> Items {get; private set;}
+		protected abstract Dictionary<string, List<ICfgNode>> Index { get; }
+
+		public abstract IReadOnlyList<KeyValuePair<string, Serialization.ICfgNode>> Items { get; }
 
 		public IEnumerable<ICfgNode> ByName(string sectionName)
 		{
 			List<ICfgNode> result;
-			if (_index.TryGetValue(sectionName, out result))
+			if (Index.TryGetValue(sectionName, out result))
 				return result;
 
 			return new ICfgNode[0];

@@ -81,6 +81,8 @@
     <Compile Include="Including\CycleIncludingTests.cs" />
     <Compile Include="Ini\IniStringSettings.cs" />
     <Compile Include="Ini\ParsingTests.cs" />
+    <Compile Include="Joining\AdditionalConfig.cs" />
+    <Compile Include="Joining\SettingsLoaderTests.cs" />
     <Compile Include="Json\DeserializeTests.cs" />
     <Compile Include="Json\JsonStringSettings.cs" />
     <Compile Include="Json\ParsingTests.cs" />
@@ -178,6 +180,14 @@
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="Joining\AppDirectory\Additional.config">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Joining\AppDirectory\main.config">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Monitoring\Additional.config">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

@@ -12,6 +12,11 @@ namespace NConfiguration.Xml
 {
 	public class XmlFileSettingsLoader : FileSearcher, IIncludeHandler<IncludeFileConfig>
 	{
+		public XmlFileSettingsLoader()
+			: base(DefaultDeserializer.Instance)
+		{
+		}
+
 		public XmlFileSettingsLoader(IDeserializer deserializer)
 			: base(deserializer)
 		{
@@ -40,9 +45,6 @@ namespace NConfiguration.Xml
 
 		public IEnumerable<IIdentifiedSource> TryLoad(IConfigNodeProvider owner, IncludeFileConfig includeConfig)
 		{
-			if(!includeConfig.Path.EndsWith(".xml", StringComparison.OrdinalIgnoreCase))
-				return null;
-
 			return CreateSettings(owner, includeConfig);
 		}
 	}

@@ -5,6 +5,8 @@ using System.Runtime.Serialization;
 using NConfiguration.Monitoring;
 using System.Collections.Generic;
 using NConfiguration.Combination;
+using NConfiguration.Joining;
+using NConfiguration.Serialization;
 
 namespace NConfiguration
 {
@@ -42,6 +44,11 @@ namespace NConfiguration
 		public static string GetSectionName<T>()
 		{
 			return typeof(T).GetSectionName();
+		}
+
+		public static IEnumerable<T> LoadSections<T>(this MultiSettings_new settings)
+		{
+			return settings.Nodes.ByName(GetSectionName<T>()).Select(_ => settings.Deserializer.Deserialize<T>(_));
 		}
 
 		/// <summary>

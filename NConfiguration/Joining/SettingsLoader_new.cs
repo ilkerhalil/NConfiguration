@@ -20,6 +20,11 @@ namespace NConfiguration.Joining
 		private HashSet<IdentityKey> _loaded = new HashSet<IdentityKey>();
 		private MultiSettings_new _result;
 
+		public SettingsLoader_new()
+			: this(DefaultDeserializer.Instance)
+		{
+		}
+
 		public SettingsLoader_new(IDeserializer deserializer)
 		{
 			_deserializer = deserializer;
@@ -27,16 +32,20 @@ namespace NConfiguration.Joining
 
 		public void AddHandler<T>(IIncludeHandler<T> handler)
 		{
-			var sectionName = typeof(T).GetSectionName();
+			AddHandler(typeof(T).GetSectionName(), handler);
+		}
 
+		public void AddHandler<T>(string sectionName, IIncludeHandler<T> handler)
+		{
 			List<Include> handlers;
-			if(!_includeHandlers.TryGetValue(sectionName, out handlers))
+			if (!_includeHandlers.TryGetValue(sectionName, out handlers))
 			{
 				handlers = new List<Include>();
 				_includeHandlers.Add(sectionName, handlers);
 			}
 			handlers.Add((target, cfgNode) => handler.TryLoad(target, _deserializer.Deserialize<T>(cfgNode)));
 		}
+
 
 		public event EventHandler<LoadedEventArgs> Loaded;
 
@@ -59,7 +68,7 @@ namespace NConfiguration.Joining
 			OnLoaded(setting);
 			_result.Observe(setting as IChangeable);
 
-			_result.Nodes = new ConfigNodeProvider2(ScanInclude(setting).ToList());
+			_result.Nodes = new DefaultConfigNodeProvider(ScanInclude(setting).ToList());
 
 			return _result;
 		}

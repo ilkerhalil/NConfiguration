@@ -14,7 +14,7 @@ namespace NConfiguration.Xml
 	/// <summary>
 	/// This settings loaded from a XML document
 	/// </summary>
-	public abstract class XmlSettings : ConfigNodeProvider, IXmlEncryptable
+	public abstract class XmlSettings : CachedConfigNodeProvider, IXmlEncryptable
 	{
 		private readonly IDeserializer _deserializer;
 

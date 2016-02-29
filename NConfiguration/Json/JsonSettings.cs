@@ -7,7 +7,7 @@ using NConfiguration.Json.Parsing;
 
 namespace NConfiguration.Json
 {
-	public abstract class JsonSettings : ConfigNodeProvider, IAppSettings
+	public abstract class JsonSettings : CachedConfigNodeProvider, IAppSettings
 	{
 		private readonly IDeserializer _deserializer;
 
