@@ -17,7 +17,6 @@ namespace NConfiguration.Json
 		private readonly JObject _obj;
 
 		public JsonStringSettings(string text)
-			: base(DefaultDeserializer.Instance)
 		{
 			var val = JValue.Parse(text);
 			if (val.Type != TokenType.Object)

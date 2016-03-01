@@ -44,7 +44,7 @@ namespace NConfiguration
 		<add name='DpapiProvider' type='System.Configuration.DpapiProtectedConfigurationProvider, System.Configuration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' />
 	</providers>
 </configProtectedData>
-</Config>".ToXmlSettings();
+</Config>".ToXmlSettings().AsSingleSettings();
 
 			var names = new List<string>();
 
@@ -83,7 +83,7 @@ namespace NConfiguration
 		<add name='DpapiProvider' type='System.Configuration.DpapiProtectedConfigurationProvider, System.Configuration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' />
 	</providers>
 </configProtectedData>
-</Config>".ToXmlSettings();
+</Config>".ToXmlSettings().AsSingleSettings();
 
 			var providers = ProviderLoader.FromAppSettings(settings).Providers;
 			
@@ -138,12 +138,12 @@ iaWGZaw==
 		[Test]
 		public void DecryptSection()
 		{
-			var settings = CryptoProvidersSettings.ToXmlSettings();
+			var settings = CryptoProvidersSettings.ToXmlSettings().AsSingleSettings();
 
 			KeyManager.Create();
 
 			var providers = ProviderLoader.FromAppSettings(settings).Providers;
-			var cryptedsettings = EncryptedCfg.ToXmlSettings(providers);
+			var cryptedsettings = EncryptedCfg.ToXmlSettings(providers).AsSingleSettings();
 
 			var cfg = cryptedsettings.First<MyXmlConfig>();
 
@@ -158,9 +158,9 @@ iaWGZaw==
 		{
 			KeyManager.Delete();
 			
-			var settings = CryptoProvidersSettings.ToXmlSettings();
+			var settings = CryptoProvidersSettings.ToXmlSettings().AsSingleSettings();
 			var providers = ProviderLoader.FromAppSettings(settings).Providers;
-			var cryptedsettings = EncryptedCfg.ToXmlSettings(providers);
+			var cryptedsettings = EncryptedCfg.ToXmlSettings(providers).AsSingleSettings();
 
 			try
 			{
@@ -176,7 +176,7 @@ iaWGZaw==
 		[Test]
 		public void EncryptSection()
 		{
-			var settings = CryptoProvidersSettings.ToXmlSettings();
+			var settings = CryptoProvidersSettings.ToXmlSettings().AsSingleSettings();
 
 			KeyManager.Create();
 
@@ -195,7 +195,7 @@ iaWGZaw==
 			var cryptedsettings = string.Format(
 				@"<Config><MyXmlCfg configProtectionProvider='RsaTestProvider'>{0}</MyXmlCfg></Config>",
 				encryptedXml
-			).ToXmlSettings(providers);
+			).ToXmlSettings(providers).AsSingleSettings();
 
 
 			var cfg = cryptedsettings.First<MyXmlConfig>();

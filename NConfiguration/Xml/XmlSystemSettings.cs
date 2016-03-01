@@ -17,8 +17,7 @@ namespace NConfiguration.Xml
 		private readonly string _sectionName;
 		private readonly string _directory;
 
-		public XmlSystemSettings(string sectionName, IDeserializer deserializer)
-			: base(deserializer)
+		public XmlSystemSettings(string sectionName)
 		{
 			_sectionName = sectionName;
 			var confFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;

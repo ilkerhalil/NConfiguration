@@ -6,46 +6,46 @@ using System.Xml.Linq;
 using System.Xml.Serialization;
 using System.Collections.Generic;
 using NConfiguration.Serialization;
+using NConfiguration.Combination;
 
 namespace NConfiguration.Joining
 {
 	public class SettingsLoader
 	{
-		private MultiSettings _settings;
-		private Dictionary<string, ISettingsFactory> _tagMap = new Dictionary<string, ISettingsFactory>(NameComparer.Instance);
+		private delegate IEnumerable<IIdentifiedSource> Include(IConfigNodeProvider target, ICfgNode config);
+
+		private readonly Dictionary<string, List<Include>> _includeHandlers = new Dictionary<string, List<Include>>(NameComparer.Instance);
+		private readonly IDeserializer _deserializer;
+
 		private HashSet<IdentityKey> _loaded = new HashSet<IdentityKey>();
+		private MultiSettings _result;
 
-		public SettingsLoader(params ISettingsFactory[] factories)
-			: this(new MultiSettings(), factories)
+		public SettingsLoader()
+			: this(DefaultDeserializer.Instance)
 		{
-		}
-
-		public SettingsLoader(MultiSettings settings, params ISettingsFactory[] factories)
-		{
-			_settings = settings;
-			AddFactory(factories);
 		}
 
-		public MultiSettings Settings
+		public SettingsLoader(IDeserializer deserializer)
 		{
-			get { return _settings; }
+			_deserializer = deserializer;
 		}
 
-		public void AddFactory(ISettingsFactory factory)
+		public void AddHandler<T>(IIncludeHandler<T> handler)
 		{
-			_tagMap[factory.Tag] = factory;
+			AddHandler(typeof(T).GetSectionName(), handler);
 		}
 
-		public void AddFactory(string name, ISettingsFactory factory)
+		public void AddHandler<T>(string sectionName, IIncludeHandler<T> handler)
 		{
-			_tagMap[name] = factory;
+			List<Include> handlers;
+			if (!_includeHandlers.TryGetValue(sectionName, out handlers))
+			{
+				handlers = new List<Include>();
+				_includeHandlers.Add(sectionName, handlers);
+			}
+			handlers.Add((target, cfgNode) => handler.TryLoad(target, _deserializer.Deserialize<T>(cfgNode)));
 		}
-	
-		public void AddFactory(params ISettingsFactory[] factories)
-		{
-			foreach(var f in factories)
-				_tagMap[f.Tag] = f;
-		}
+
 
 		public event EventHandler<LoadedEventArgs> Loaded;
 
@@ -56,34 +56,56 @@ namespace NConfiguration.Joining
 				copy(this, new LoadedEventArgs(settings));
 		}
 
-		public SettingsLoader LoadSettings(IIdentifiedSource setting)
+		public MultiSettings LoadSettings(IIdentifiedSource setting)
 		{
-			if (CheckLoaded(setting))
-				return this;
-			
-			_settings.Add(setting);
+			_result = new MultiSettings();
+			_result.Deserializer = _deserializer;
+			_result.Combiner = DefaultCombiner.Instance;
+
+			_loaded = new HashSet<IdentityKey>();
+
+			CheckLoaded(setting);
 			OnLoaded(setting);
-			IncludeSettings(setting);
-			return this;
+			_result.Observe(setting as IChangeable);
+
+			_result.Nodes = new DefaultConfigNodeProvider(ScanInclude(setting).ToList());
+
+			return _result;
 		}
 
-		private void IncludeSettings(IIdentifiedSource source)
+		private IEnumerable<KeyValuePair<string, ICfgNode>> ScanInclude(IIdentifiedSource source)
 		{
-			var includeRoot = source.TryFirst<ICfgNode>("Include", false);
-			if(includeRoot == null)
-				return;
-
-			foreach (var incNode in includeRoot.Nested)
+			foreach(var pair in source.Items)
 			{
-				if (NameComparer.Equals(incNode.Key, "FinalSearch"))
+				if (NameComparer.Equals(pair.Key, AppSettingExtensions.IdentitySectionName) ||
+					NameComparer.Equals(pair.Key, AppSettingExtensions.WatchFileSectionName))
 					continue;
 
-				ISettingsFactory factory;
-				if(!_tagMap.TryGetValue(incNode.Key, out factory))
-					throw new InvalidOperationException(string.Format("unknown include type '{0}'", incNode.Key));
+				List<Include> hadlers;
+				if (!_includeHandlers.TryGetValue(pair.Key, out hadlers))
+				{
+					yield return pair;
+					continue;
+				}
 
-				foreach (var incSetting in factory.CreateSettings(source, incNode.Value))
-					LoadSettings(incSetting);
+				var includeSettings = hadlers
+					.Select(_ => _(source, pair.Value))
+					.FirstOrDefault(_ => _ != null);
+
+				if (includeSettings == null)
+					throw new NotSupportedException("any registered handlers returned null");
+
+				foreach (var cnProvider in includeSettings)
+				{
+					if (CheckLoaded(cnProvider))
+						continue;
+
+					OnLoaded(cnProvider);
+					_result.Observe(cnProvider as IChangeable);
+
+					foreach(var includePair in ScanInclude(cnProvider))
+						yield return includePair;
+				}
 			}
 		}
 

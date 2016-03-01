@@ -20,20 +20,19 @@ namespace NConfiguration.Examples
 		[Test]
 		public void Load()
 		{
+			var xmlFileLoader = new XmlFileSettingsLoader();
 
-			var xmlFileLoader = new XmlFileSettingsLoader(DefaultDeserializer.Instance);
+			var loader = new SettingsLoader();
+			loader.AddHandler("IncludeXmlFile", xmlFileLoader);
 
-			var loader = new SettingsLoader(xmlFileLoader);
 			loader.Loaded += (s,e) => 
 			{
 				Console.WriteLine("Loaded: {0} ({1})", e.Settings.GetType(), e.Settings.Identity);
 			};
 
-			loader.LoadSettings(xmlFileLoader.LoadFile("Examples/AppDirectory/main.config"));
+			var settings = loader.LoadSettings(xmlFileLoader.LoadFile("Examples/AppDirectory/main.config"));
 
-			IAppSettings settings = loader.Settings;
-
-			var addCfg = settings.TryCombine<ExampleCombineConfig>("AdditionalConfig", DefaultCombiner.Instance);
+			var addCfg = settings.TryGet<ExampleCombineConfig>("AdditionalConfig");
 
 			Assert.IsNotNull(addCfg);
 			Assert.AreEqual("InAppDirectory", addCfg.F);
@@ -42,20 +41,21 @@ namespace NConfiguration.Examples
 		[Test]
 		public void LoadJson()
 		{
-			var xmlFileLoader = new XmlFileSettingsLoader(DefaultDeserializer.Instance);
-			var jsonFileLoader = new JsonFileSettingsLoader(DefaultDeserializer.Instance);
+			var xmlFileLoader = new XmlFileSettingsLoader();
+			var jsonFileLoader = new JsonFileSettingsLoader();
 
-			var loader = new SettingsLoader(xmlFileLoader, jsonFileLoader);
+			var loader = new SettingsLoader();
+			loader.AddHandler("IncludeXmlFile", xmlFileLoader);
+			loader.AddHandler("IncludeJsonFile", jsonFileLoader);
+
 			loader.Loaded += (s, e) =>
 			{
 				Console.WriteLine("Loaded: {0} ({1})", e.Settings.GetType(), e.Settings.Identity);
 			};
 
-			loader.LoadSettings(xmlFileLoader.LoadFile("Examples/AppDirectory/mainJson.config"));
+			var settings = loader.LoadSettings(xmlFileLoader.LoadFile("Examples/AppDirectory/mainJson.config"));
 
-			IAppSettings settings = loader.Settings;
-
-			var addCfg = settings.TryCombine<ExampleCombineConfig>("AdditionalConfig", DefaultCombiner.Instance);
+			var addCfg = settings.TryGet<ExampleCombineConfig>("AdditionalConfig");
 
 			Assert.IsNotNull(addCfg);
 			Assert.AreEqual("InAppDirectory_json", addCfg.F);
@@ -64,21 +64,18 @@ namespace NConfiguration.Examples
 		[Test]
 		public void AutoCombineLoad()
 		{
-			var xmlFileLoader = new XmlFileSettingsLoader(DefaultDeserializer.Instance);
+			var xmlFileLoader = new XmlFileSettingsLoader();
 
-			var loader = new SettingsLoader(xmlFileLoader);
+			var loader = new SettingsLoader();
+			loader.AddHandler("IncludeXmlFile", xmlFileLoader);
 			loader.Loaded += (s, e) =>
 			{
 				Console.WriteLine("Loaded: {0} ({1})", e.Settings.GetType(), e.Settings.Identity);
 			};
 
-			loader.LoadSettings(xmlFileLoader.LoadFile("Examples/AppDirectory/autoMain.config"));
-
-			var settings = new CombinableAppSettings(loader.Settings);
+			var settings = loader.LoadSettings(xmlFileLoader.LoadFile("Examples/AppDirectory/autoMain.config"));
 
 			var cfg = settings.TryGet<ChildAutoCombinableConnectionConfig>();
-
-			var cfgs = settings.Settings.LoadCollection<ChildAutoCombinableConnectionConfig>().ToArray();
 
 			Assert.IsNotNull(cfg);
 			Assert.AreEqual("Server=localhost;Database=workDb;User ID=admin;Password=pass;Trusted_Connection=True;Connection Timeout=60", cfg.ConnectionString);
@@ -90,9 +87,10 @@ namespace NConfiguration.Examples
 			KeyManager.Create();
 
 			var providerLoader = new ProviderLoader();
-			var xmlFileLoader = new XmlFileSettingsLoader(DefaultDeserializer.Instance);
+			var xmlFileLoader = new XmlFileSettingsLoader();
 
-			var loader = new SettingsLoader(xmlFileLoader);
+			var loader = new SettingsLoader();
+			loader.AddHandler("IncludeXmlFile", xmlFileLoader);
 			loader.Loaded += providerLoader.TryExtractConfigProtectedData;
 			
 			loader.Loaded += (s, e) =>
@@ -100,17 +98,15 @@ namespace NConfiguration.Examples
 				Console.WriteLine("Loaded: {0} ({1})", e.Settings.GetType(), e.Settings.Identity);
 			};
 
-			loader.LoadSettings(xmlFileLoader.LoadFile("Examples/AppDirectory/secureMain.config"));
+			var settings = loader.LoadSettings(xmlFileLoader.LoadFile("Examples/AppDirectory/secureMain.config"));
 
-			IAppSettings settings = loader.Settings;
-
-			var addCfg = settings.TryCombine<ExampleCombineConfig>("AdditionalConfig", DefaultCombiner.Instance);
+			var addCfg = settings.TryGet<ExampleCombineConfig>("AdditionalConfig");
 
 			Assert.IsNotNull(addCfg);
 			Assert.AreEqual("InUpDirectory", addCfg.F);
 
-			Assert.AreEqual("Server=localhost;Database=workDb;User ID=admin;Password=pass;", settings.TryFirst<ConnectionConfig>("MyExtConnection").ConnectionString);
-			Assert.AreEqual("Server=localhost;Database=workDb;User ID=admin;Password=pass;", settings.TryFirst<ConnectionConfig>("MySecuredConnection").ConnectionString);
+			Assert.AreEqual("Server=localhost;Database=workDb;User ID=admin;Password=pass;", settings.TryGet<ConnectionConfig>("MyExtConnection").ConnectionString);
+			Assert.AreEqual("Server=localhost;Database=workDb;User ID=admin;Password=pass;", settings.TryGet<ConnectionConfig>("MySecuredConnection").ConnectionString);
 
 			KeyManager.Delete();
 		}

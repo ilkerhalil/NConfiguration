@@ -91,7 +91,6 @@
     <Compile Include="Monitoring\AppSettingChangeTests.cs" />
     <Compile Include="Monitoring\FileMonitorTests.cs" />
     <Compile Include="MultiSettings\CombineConfig.cs" />
-    <Compile Include="MultiSettings\MultiSettingsCombineTests.cs" />
     <Compile Include="Protected\XmlCryptoProvidersTests.cs" />
     <Compile Include="CombinableAppSettingsTests.cs" />
     <Compile Include="Serialization\PlaceHolderDeserializer.cs" />
@@ -102,15 +101,11 @@
     <Compile Include="StringConverterTests.cs" />
     <Compile Include="XmlSystemSettingsTests.cs" />
     <Compile Include="MultiSettings\FullCombineConfig.cs" />
-    <Compile Include="MultiSettings\MultiSettingsFullCombineTests.cs" />
     <Compile Include="MyXmlConfig.cs" />
     <Compile Include="XmlFileSettingsTests.cs" />
-    <Compile Include="MultiSettings\MultiSettingsReplaceTests.cs" />
     <Compile Include="MultiSettings\ReplacedConfig.cs" />
-    <Compile Include="Including\IncludeSectionTests.cs" />
     <Compile Include="XmlStringSettings.cs" />
     <Compile Include="ExtensionsForTests.cs" />
-    <Compile Include="MultiSettings\MultiSettingsBase.cs" />
     <Compile Include="Combination\ComplexTests.cs" />
     <Compile Include="Combination\SimplyTests.cs" />
     <Compile Include="Combination\TestStruct.cs" />

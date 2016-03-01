@@ -21,11 +21,9 @@ namespace NConfiguration
 <Combinable Field1='val1' />
 <Combinable Field1='val2' />
 <Combinable Field1='val3' />
-</Config>".ToXmlSettings();
+</Config>".ToXmlSettings().AsSingleSettings();
 
-			var cCfgs = new CombinableAppSettings(settings);
-
-			var connCfg = cCfgs.Get<CustomCombinableConfig>("Combinable");
+			var connCfg = settings.Get<CustomCombinableConfig>("Combinable");
 
 			Assert.That(connCfg.Field1, Is.EqualTo("val1val2val3"));
 		}
@@ -37,11 +35,10 @@ namespace NConfiguration
 <Combinable Field1='val1' />
 <Combinable Field1='val2' />
 <Combinable Field1='val3' />
-</Config>".ToXmlSettings();
+</Config>".ToXmlSettings().AsSingleSettings();
 
-			var cCfgs = new CombinableAppSettings(settings);
 
-			var connCfg = cCfgs.Get<CombinableConfig>("Combinable");
+			var connCfg = settings.Get<CombinableConfig>("Combinable");
 
 			Assert.That(connCfg.Field1, Is.EqualTo("val3"));
 		}

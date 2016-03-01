@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration Identity="xml"> 
-	<include>
-		<JsonFile Path='jsonPartial_id1.json' Search='Exact' Include='First' Required='true'/>
-		<IniFile Path='iniPartial_id1.ini' Search='Exact' Include='First' Required='true'/>
-		<JsonFile Path='jsonPartial_id2.json' Search='Exact' Include='First' Required='true'/>
-		<IniFile Path='iniPartial_id2.ini' Search='Exact' Include='First' Required='true'/>
-	</include>
 	<xmlPartialConfig Field="xml id2"/>
+	<IncludeJsonFile Path='jsonPartial_id1.json' Search='Exact' Include='First' Required='true'/>
+	<IncludeIniFile Path='iniPartial_id1.ini' Search='Exact' Include='First' Required='true'/>
+	<IncludeJsonFile Path='jsonPartial_id2.json' Search='Exact' Include='First' Required='true'/>
+	<IncludeIniFile Path='iniPartial_id2.ini' Search='Exact' Include='First' Required='true'/>
 </configuration>

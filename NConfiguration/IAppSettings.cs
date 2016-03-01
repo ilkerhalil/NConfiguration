@@ -1,4 +1,5 @@
-
+using NConfiguration.Combination;
+using NConfiguration.Serialization;
 using System.Collections.Generic;
 
 namespace NConfiguration
@@ -6,13 +7,12 @@ namespace NConfiguration
 	/// <summary>
 	/// Store application settings
 	/// </summary>
-	public interface IAppSettings
+	public interface IAppSettings //UNDONE rename
 	{
-		/// <summary>
-		/// Returns a collection of instances of configurations
-		/// </summary>
-		/// <typeparam name="T">type of instance of configuration</typeparam>
-		/// <param name="sectionName">section name</param>
-		IEnumerable<T> LoadCollection<T>(string sectionName);
+		IConfigNodeProvider Nodes { get; }
+
+		IDeserializer Deserializer { get; }
+
+		ICombiner Combiner { get; }
 	}
 }

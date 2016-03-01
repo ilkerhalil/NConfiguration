@@ -125,9 +125,9 @@ namespace NConfiguration.Xml.Protected
 			return new ProviderLoader().LoadAppSettings(settings);
 		}
 
-		public ProviderLoader TryLoadAppSettings(IAppSettings settings)
+		public ProviderLoader TryLoadAppSettings(IConfigNodeProvider provider)
 		{
-			var cfg = settings.TryFirst<ConfigProtectedData>(false);
+			var cfg = provider.TryFirst<ConfigProtectedData>(false);
 			if (cfg == null)
 				return this;
 

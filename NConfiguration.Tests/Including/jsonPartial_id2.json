@@ -1,14 +1,11 @@
 {
 	"Identity":"json",
-	"include":
-	{
-		"XmlFile": { "Path":"xmlPartial_id1.xml", "Search":"Exact", "Include":"First", "Required":"true" },
-		"IniFile": { "Path":"iniPartial_id1.ini", "Search":"Exact", "Include":"First", "Required":"true"},
-		"XmlFile": { "Path":"xmlPartial_id2.xml", "Search":"Exact", "Include":"First", "Required":"true" },
-		"IniFile": { "Path":"iniPartial_id2.ini", "Search":"Exact", "Include":"First", "Required":"true"}
-	},
 	"jsonPartialConfig":
 	{
 		"Field":"json id2"
-	}
+	},
+	"IncludeXmlFile": { "Path":"xmlPartial_id1.xml", "Search":"Exact", "Include":"First", "Required":"true" },
+	"IncludeIniFile": { "Path":"iniPartial_id1.ini", "Search":"Exact", "Include":"First", "Required":"true"},
+	"IncludeXmlFile": { "Path":"xmlPartial_id2.xml", "Search":"Exact", "Include":"First", "Required":"true" },
+	"IncludeIniFile": { "Path":"iniPartial_id2.ini", "Search":"Exact", "Include":"First", "Required":"true"}
 }

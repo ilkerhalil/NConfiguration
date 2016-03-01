@@ -1,11 +1,8 @@
 {
-	"include":
-	{
-		"XmlFile": { "Path":"xmlPartial.xml", "Search":"Exact", "Include":"First", "Required":"true" },
-		"IniFile": { "Path":"iniPartial.ini", "Search":"Exact", "Include":"First", "Required":"true"}
-	},
 	"jsonPartialConfig":
 	{
 		"Field":"json"
-	}
+	},
+	"IncludeXmlFile": { "Path":"xmlPartial.xml", "Search":"Exact", "Include":"First", "Required":"true" },
+	"IncludeIniFile": { "Path":"iniPartial.ini", "Search":"Exact", "Include":"First", "Required":"true"}
 }

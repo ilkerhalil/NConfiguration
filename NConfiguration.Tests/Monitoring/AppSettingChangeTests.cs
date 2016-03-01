@@ -35,12 +35,12 @@ namespace NConfiguration.Monitoring
 			string cfgFile = Path.GetTempFileName();
 			File.WriteAllText(cfgFile, _xmlCfgAutoOrigin);
 
-			var xmlFileLoader = new XmlFileSettingsLoader(DefaultDeserializer.Instance);
+			var xmlFileLoader = new XmlFileSettingsLoader();
 
-			IAppSettings settings = xmlFileLoader.LoadFile(cfgFile);
+			IAppSettings settings = xmlFileLoader.LoadFile(cfgFile).AsSingleSettings();
 			
 			var wait = new ManualResetEvent(false);
-			((IChangeable)settings).Changed += (a, e) => { wait.Set(); };
+			((IChangeable)settings.Nodes).Changed += (a, e) => { wait.Set(); };
 
 			var t = Task.Factory.StartNew(() =>
 			{
@@ -51,23 +51,21 @@ namespace NConfiguration.Monitoring
 
 			Assert.IsTrue(wait.WaitOne(10000), "10 sec elapsed");
 
-			settings = xmlFileLoader.LoadFile(cfgFile);
+			settings = xmlFileLoader.LoadFile(cfgFile).AsSingleSettings();
 			Assert.That(settings.First<ExampleCombineConfig>("AdditionalConfig").F, Is.EqualTo("Modify"));
 		}
 
 		private string _xmlCfgMain = @"<?xml version='1.0' encoding='utf-8' ?>
 <configuration>
 	<WatchFile Mode='Auto' />
-	<include>
-		<XmlFile Path='{0}' Search='Exact' Include='First' Required='true'/>
-	</include>
 	<AdditionalConfig F='InMain'/>
+	<IncludeXmlFile Path='{0}' Search='Exact' Include='First' Required='true'/>
 </configuration>";
 
 		[Test]
 		public void MultiChange()
 		{
-			var xmlFileLoader = new XmlFileSettingsLoader(DefaultDeserializer.Instance);
+			var xmlFileLoader = new XmlFileSettingsLoader();
 
 			string cfgMainFile = Path.GetTempFileName();
 			string cfgAdditionalFile = Path.GetTempFileName();
@@ -76,13 +74,12 @@ namespace NConfiguration.Monitoring
 			File.WriteAllText(cfgAdditionalFile, _xmlCfgAutoOrigin);
 			File.WriteAllText(cfgMainFile, string.Format(_xmlCfgMain, cfgAdditionalFile));
 
-			var loader = new SettingsLoader(xmlFileLoader);
-			loader.LoadSettings(xmlFileLoader.LoadFile(cfgMainFile));
-
-			IAppSettings settings = loader.Settings;
+			var loader = new SettingsLoader();
+			loader.AddHandler("IncludeXmlFile", xmlFileLoader);
+			var settings = loader.LoadSettings(xmlFileLoader.LoadFile(cfgMainFile));
 
 			var wait = new ManualResetEvent(false);
-			((IChangeable)settings).Changed += (s, e) => { wait.Set(); };
+			settings.Changed += (s, e) => { wait.Set(); };
 
 			var t = Task.Factory.StartNew(() =>
 			{

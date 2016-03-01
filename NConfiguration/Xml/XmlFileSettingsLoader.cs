@@ -12,35 +12,14 @@ namespace NConfiguration.Xml
 {
 	public class XmlFileSettingsLoader : FileSearcher, IIncludeHandler<IncludeFileConfig>
 	{
-		public XmlFileSettingsLoader()
-			: base(DefaultDeserializer.Instance)
-		{
-		}
-
-		public XmlFileSettingsLoader(IDeserializer deserializer)
-			: base(deserializer)
-		{
-		}
-
 		public IIdentifiedSource LoadFile(string fileName)
 		{
-			return new XmlFileSettings(fileName, Deserializer);
-		}
-
-		/// <summary>
-		/// name of including configuration
-		/// </summary>
-		public override string Tag
-		{
-			get
-			{
-				return "XmlFile";
-			}
+			return new XmlFileSettings(fileName);
 		}
 
 		public override IIdentifiedSource CreateFileSetting(string path)
 		{
-			return new XmlFileSettings(path, Deserializer);
+			return new XmlFileSettings(path);
 		}
 
 		public IEnumerable<IIdentifiedSource> TryLoad(IConfigNodeProvider owner, IncludeFileConfig includeConfig)

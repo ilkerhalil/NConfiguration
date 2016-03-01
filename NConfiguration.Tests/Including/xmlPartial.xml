@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
-	<include>
-		<JsonFile Path='jsonPartial.json' Search='Exact' Include='First' Required='true'/>
-		<IniFile Path='iniPartial.ini' Search='Exact' Include='First' Required='true'/>
-	</include>
 	<xmlPartialConfig Field="xml"/>
+	<IncludeJsonFile Path='jsonPartial.json' Search='Exact' Include='First' Required='true'/>
+	<IncludeIniFile Path='iniPartial.ini' Search='Exact' Include='First' Required='true'/>
 </configuration>

@@ -6,21 +6,23 @@ using System.Xml.Linq;
 using System.Xml.Serialization;
 using System.Collections.Generic;
 using System.Threading;
+using NConfiguration.Serialization;
+using NConfiguration.Combination;
 
 namespace NConfiguration.Joining
 {
 	public class MultiSettings : IAppSettings, IChangeable
 	{
 		private readonly object _sync = new object();
-		private readonly LinkedList<IAppSettings> _list = new LinkedList<IAppSettings>();
 		private bool _changed = false;
 		private object _firstChangedSource = null;
 
-		public void Add(IAppSettings setting)
+		internal MultiSettings()
 		{
-			_list.AddLast(setting);
+		}
 
-			var changable = setting as IChangeable;
+		internal void Observe(IChangeable changable)
+		{
 			if(changable != null)
 				changable.Changed += OnInnerChangableChanged;
 		}
@@ -41,14 +43,6 @@ namespace NConfiguration.Joining
 
 			if (copy != null)
 				copy(_firstChangedSource, EventArgs.Empty);
-		}
-		
-		public IEnumerable<T> LoadCollection<T>(string sectionName)
-		{
-			if (sectionName == null)
-				throw new ArgumentNullException("sectionName");
-
-			return _list.SelectMany(item => item.LoadCollection<T>(sectionName));
 		}
 
 		private EventHandler _changedHandler = null;
@@ -82,6 +76,12 @@ namespace NConfiguration.Joining
 		{
 			((EventHandler)arg)(_firstChangedSource, EventArgs.Empty);
 		}
+
+		public IConfigNodeProvider Nodes { get; internal set; }
+
+		public IDeserializer Deserializer { get; internal set; }
+
+		public ICombiner Combiner { get; internal set; }
 	}
 }
 

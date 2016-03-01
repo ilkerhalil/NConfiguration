@@ -18,8 +18,7 @@ namespace NConfiguration.Ini
 		private readonly List<Section> _sections;
 		private readonly FileMonitor _fm;
 
-		public IniFileSettings(string fileName, IDeserializer deserializer)
-			: base(deserializer)
+		public IniFileSettings(string fileName)
 		{
 			try
 			{

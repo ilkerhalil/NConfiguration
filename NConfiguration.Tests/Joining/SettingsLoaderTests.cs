@@ -16,7 +16,7 @@ namespace NConfiguration.Tests.Joining
 		public void IncludeInMiddle()
 		{
 			var xmlFileLoader = new XmlFileSettingsLoader();
-			var loader = new SettingsLoader_new();
+			var loader = new SettingsLoader();
 			loader.AddHandler<IncludeFileConfig>("IncludeXmlFile", xmlFileLoader);
 
 			var settings = loader.LoadSettings(xmlFileLoader.LoadFile("Joining/AppDirectory/main.config"));

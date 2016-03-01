@@ -45,8 +45,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="CombinableAppSettings.cs" />
-    <Compile Include="CombinableAppSettingExtensions.cs" />
     <Compile Include="Combination\BuildUtils.cs" />
     <Compile Include="Combination\CombinerAttribute.cs" />
     <Compile Include="Combination\BuildUtils.Combiners.cs" />
@@ -63,16 +61,15 @@
     <Compile Include="DefaultConfigNodeProvider.cs" />
     <Compile Include="CachedConfigNodeProvider.cs" />
     <Compile Include="IConfigNodeProvider.cs" />
+    <Compile Include="Ini\SettingsLoaderExtensions.cs" />
     <Compile Include="Joining\IIncludeHandler.cs" />
-    <Compile Include="Joining\MultiSettings_new.cs" />
-    <Compile Include="Joining\SettingsLoader_new.cs" />
+    <Compile Include="Joining\MultiSettings.cs" />
+    <Compile Include="Joining\SettingsLoader.cs" />
     <Compile Include="SingleAppSettings.cs" />
-    <Compile Include="IAppSettings_new.cs" />
-    <Compile Include="ICombinableAppSettings.cs" />
+    <Compile Include="IAppSettings.cs" />
     <Compile Include="DeserializeChildException.cs" />
     <Compile Include="IChangeable.cs" />
     <Compile Include="Joining\FindingSettingsArgs.cs" />
-    <Compile Include="Joining\ISettingsFactory.cs" />
     <Compile Include="Monitoring\AsyncComparer.cs" />
     <Compile Include="Monitoring\FileMonitor.cs" />
     <Compile Include="Serialization\DeserializerAttribute.cs" />
@@ -120,7 +117,6 @@
     <Compile Include="Xml\XmlViewNode.cs" />
     <Compile Include="Serialization\ICfgNode.cs" />
     <Compile Include="IFilePathOwner.cs" />
-    <Compile Include="IAppSettings.cs" />
     <Compile Include="AppSettingExtensions.cs" />
     <Compile Include="Ini\Section.cs" />
     <Compile Include="Ini\Parsing\TokenType.cs" />
@@ -130,7 +126,6 @@
     <Compile Include="Ini\ViewSection.cs" />
     <Compile Include="Ini\IniFileSettings.cs" />
     <Compile Include="Ini\IniFileSettingsLoader.cs" />
-    <Compile Include="Joining\SettingsLoader.cs" />
     <Compile Include="Joining\FileSearcher.cs" />
     <Compile Include="Xml\XmlFileSettings.cs" />
     <Compile Include="Xml\Protected\IXmlEncryptable.cs" />
@@ -142,7 +137,6 @@
     <Compile Include="Xml\Protected\ProviderLoader.cs" />
     <Compile Include="Xml\Protected\ProviderCollection.cs" />
     <Compile Include="SectionNotFoundException.cs" />
-    <Compile Include="Joining\MultiSettings.cs" />
     <Compile Include="Xml\PlainXmlSection.cs" />
     <Compile Include="Xml\XmlSystemSettings.cs" />
     <Compile Include="Xml\XmlLinqConversionExtensions.cs" />

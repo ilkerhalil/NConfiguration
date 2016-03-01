@@ -15,7 +15,6 @@ namespace NConfiguration.Ini
 		private readonly List<Section> _sections;
 
 		public IniStringSettings(string text)
-			: base(DefaultDeserializer.Instance)
 		{
 			_sections = Section.Parse(text);
 		}

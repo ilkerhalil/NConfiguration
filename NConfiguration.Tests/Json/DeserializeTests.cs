@@ -12,7 +12,7 @@ namespace NConfiguration.Json
 	[TestFixture]
 	public class DeserializeTests
 	{
-		JsonStringSettings settings = new JsonStringSettings(@"{
+		IAppSettings settings = new JsonStringSettings(@"{
 	""Section1"":
 	{
 		""Item1"":""item1.value1"",
@@ -32,7 +32,7 @@ namespace NConfiguration.Json
 		""Item1"": [ 1, 2 ],
 		""Item1"": null,
 		""Item1"": [ null, [ 1, 2 ]]
-	}}");
+	}}").AsSingleSettings();
 
 		public class Section1
 		{

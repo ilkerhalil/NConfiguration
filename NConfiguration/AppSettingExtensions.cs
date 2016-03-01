@@ -19,21 +19,31 @@ namespace NConfiguration
 
 		internal static readonly string WatchFileSectionName = "WatchFile";
 
-		internal static string GetIdentitySource(this IAppSettings settings, string defaultIdentity)
+		internal static string GetIdentitySource(this IConfigNodeProvider nodeProvider, string defaultIdentity)
 		{
-			var result = settings.TryFirst<string>(IdentitySectionName);
-			return string.IsNullOrWhiteSpace(result) ? defaultIdentity : result;
+			foreach(var node in nodeProvider.ByName(IdentitySectionName))
+				return node.Text;
+
+			return defaultIdentity;
 		}
 
-		internal static FileMonitor GetMonitoring(this IAppSettings settings, string fileName, byte[] expectedContent)
+		internal static FileMonitor GetMonitoring(this IConfigNodeProvider nodeProvider, string fileName, byte[] expectedContent)
 		{
-			var cfg = settings.TryFirst<WatchFileConfig>(WatchFileSectionName);
-			if (cfg == null)
-				return null;
-			if (cfg.Mode == WatchMode.None)
-				return null;
+			foreach (var node in nodeProvider.ByName(IdentitySectionName))
+			{
+				var cfg = DefaultDeserializer.Instance.Deserialize<WatchFileConfig>(node);
+				if (cfg.Mode == WatchMode.None)
+					return null;
 
-			return new FileMonitor(fileName, expectedContent, cfg.Mode, cfg.Delay);
+				return new FileMonitor(fileName, expectedContent, cfg.Mode, cfg.Delay);
+			}
+
+			return null;
+		}
+
+		public static IAppSettings AsSingleSettings(this IConfigNodeProvider nodeProvider)
+		{
+			return new SingleAppSettings(nodeProvider);
 		}
 
 		/// <summary>
@@ -46,9 +56,34 @@ namespace NConfiguration
 			return typeof(T).GetSectionName();
 		}
 
-		public static IEnumerable<T> LoadSections<T>(this MultiSettings_new settings)
+		public static T TryGet<T>(this IAppSettings settings)
 		{
-			return settings.Nodes.ByName(GetSectionName<T>()).Select(_ => settings.Deserializer.Deserialize<T>(_));
+			return settings.TryGet<T>(GetSectionName<T>());
+		}
+
+		public static T TryGet<T>(this IAppSettings settings, string sectionName)
+		{
+			var cfgs = settings.LoadSections<T>(sectionName).GetEnumerator();
+
+			if (!cfgs.MoveNext())
+				return default(T);
+
+			T sum = cfgs.Current;
+
+			while (cfgs.MoveNext())
+				sum = settings.Combiner.Combine<T>(sum, cfgs.Current);
+
+			return sum;
+		}
+
+		public static IEnumerable<T> LoadSections<T>(this IAppSettings settings, string sectionName)
+		{
+			return settings.Nodes.ByName(sectionName).Select(_ => settings.Deserializer.Deserialize<T>(_));
+		}
+
+		public static IEnumerable<T> LoadSections<T>(this IAppSettings settings)
+		{
+			return settings.LoadSections<T>(GetSectionName<T>());
 		}
 
 		/// <summary>
@@ -67,228 +102,75 @@ namespace NConfiguration
 			else
 				return dataAttrName;
 		}
-		
-		/// <summary>
-		/// Load the first configuration object.
-		/// Resolve the section name in XmlRootAttribute or DataContractAttribute
-		/// </summary>
-		/// <param name='settings'>instance of application settings</param>
-		/// <typeparam name='T'>type of configuration</typeparam>
-		public static T First<T>(this IAppSettings settings) where T : class
+
+		public static T TryFirst<T>(this IAppSettings settings)
+		{
+			return settings.TryFirst<T>(GetSectionName<T>());
+		}
+
+		public static T TryFirst<T>(this IAppSettings settings, string sectionName)
+		{
+			foreach (var result in settings.LoadSections<T>(sectionName))
+				return result;
+
+			return default(T);
+		}
+
+		public static T First<T>(this IAppSettings settings)
 		{
 			return settings.First<T>(GetSectionName<T>());
 		}
-		
-		/// <summary>
-		/// Load the first configuration object by name.
-		/// </summary>
-		/// <param name='settings'>instance of application settings</param>
-		/// <param name='sectionName'>Section name.</param>
-		/// <typeparam name='T'>type of configuration</typeparam>
-		public static T First<T>(this IAppSettings settings, string sectionName) where T : class
+
+		public static T First<T>(this IAppSettings settings, string sectionName)
 		{
-			var result = settings
-				.LoadCollection<T>(sectionName)
-				.FirstOrDefault();
-			if(result == null)
-				throw new SectionNotFoundException(sectionName, typeof(T));
-			return result;
+			foreach(var result in settings.LoadSections<T>(sectionName))
+				return result;
+
+			throw new SectionNotFoundException(sectionName, typeof(T));
 		}
-		
-		/// <summary>
-		/// Trying to load the first configuration.
-		/// Resolve the section name in XmlRootAttribute or DataContractAttribute
-		/// </summary>
-		/// <returns>
-		/// Instance of configuration or null or default instance
-		/// </returns>
-		/// <param name='settings'>instance of application settings</param>
-		/// <param name='createDefaultInstance'>Create default instance.</param>
-		/// <typeparam name='T'>type of configuration</typeparam>
+
+		public static T TryFirst<T>(this IConfigNodeProvider nodeProvider, bool createDefaultInstance) where T : class
+		{
+			foreach (var node in nodeProvider.ByName(GetSectionName<T>()))
+				return DefaultDeserializer.Instance.Deserialize<T>(node);
+
+			return createDefaultInstance ? Activator.CreateInstance<T>() : null;
+		}
+
 		public static T TryFirst<T>(this IAppSettings settings, bool createDefaultInstance) where T : class
 		{
-			var result = settings
-				.LoadCollection<T>(GetSectionName<T>())
-				.FirstOrDefault();
-			if (result == null && createDefaultInstance)
-				result = Activator.CreateInstance<T>();
-			return result;
+			return settings.TryFirst<T>(GetSectionName<T>(), createDefaultInstance);
 		}
-		
-		/// <summary>
-		/// Trying to load the first configuration by name.
-		/// </summary>
-		/// <returns>
-		/// Instance of configuration or null or default instance
-		/// </returns>
-		/// <param name='settings'>instance of application settings</param>
-		/// <param name='sectionName'>Section name.</param>
-		/// <param name='createDefaultInstance'>Create default instance.</param>
-		/// <typeparam name='T'>type of configuration</typeparam>
+
 		public static T TryFirst<T>(this IAppSettings settings, string sectionName, bool createDefaultInstance) where T : class
 		{
-			var result = settings
-				.LoadCollection<T>(sectionName)
-				.FirstOrDefault();
-			if(result == null && createDefaultInstance)
-				result = Activator.CreateInstance<T>();
-			return result;
+			foreach (var result in settings.LoadSections<T>(sectionName))
+				return result;
+
+			return createDefaultInstance ? Activator.CreateInstance<T>() : null;
 		}
 
-		/// <summary>
-		/// Trying to load the first configuration by name.
-		/// </summary>
-		/// <returns>
-		/// Instance of configuration or null or default instance
-		/// </returns>
-		/// <param name='settings'>instance of application settings</param>
-		/// <param name='sectionName'>Section name.</param>
-		/// <typeparam name='T'>type of configuration</typeparam>
-		public static T TryFirst<T>(this IAppSettings settings, string sectionName) where T : class
+		public static T Get<T>(this IAppSettings settings)
 		{
-			return settings
-				.LoadCollection<T>(sectionName)
-				.FirstOrDefault();
+			return settings.Get<T>(GetSectionName<T>());
 		}
 
-		/// <summary>
-		/// Trying to load the first configuration.
-		/// Resolve the section name in XmlRootAttribute or DataContractAttribute
-		/// </summary>
-		/// <returns>
-		/// Instance of configuration or null or default instance
-		/// </returns>
-		/// <param name='settings'>instance of application settings</param>
-		/// <typeparam name='T'>type of configuration</typeparam>
-		public static T TryFirst<T>(this IAppSettings settings) where T : class
+		public static T Get<T>(this IAppSettings settings, string sectionName)
 		{
-			return settings
-				.LoadCollection<T>(GetSectionName<T>())
-				.FirstOrDefault();
-		}
+			var cfgs = settings.LoadSections<T>(sectionName).GetEnumerator();
 
-		/// <summary>
-		/// Trying to combines a collection of settings in one instance.
-		/// </summary>
-		/// <typeparam name="T">type of instance of configuration</typeparam>
-		/// <param name="settings">instance of application settings</param>
-		/// <param name="combiner">combiner</param>
-		/// <returns>Instance of configuration or null.</returns>
-		public static T TryCombine<T>(this IAppSettings settings, ICombiner combiner)
-		{
-			return TryCombine<T>(settings, GetSectionName<T>(), combiner);
-		}
-
-		/// <summary>
-		/// Trying to combines a collection of settings in one instance by specified name
-		/// </summary>
-		/// <typeparam name="T">type of instance of configuration</typeparam>
-		/// <param name="settings">instance of application settings</param>
-		/// <param name="sectionName">section name</param>
-		/// <param name="combiner">combiner</param>
-		/// <returns>Instance of configuration or null.</returns>
-		public static T TryCombine<T>(this IAppSettings settings, string sectionName, ICombiner combiner)
-		{
-			T sum = default(T);
-			foreach (var cfg in settings.LoadCollection<T>(sectionName))
-				sum = combiner.Combine<T>(sum, cfg);
-
-			return sum;
-		}
-
-		/// <summary>
-		/// Combines a collection of settings in one instance.
-		/// </summary>
-		/// <typeparam name="T">type of instance of configuration</typeparam>
-		/// <param name="settings">instance of application settings</param>
-		/// <param name="combiner">combiner</param>
-		public static T Combine<T>(this IAppSettings settings, ICombiner combiner)
-		{
-			return Combine<T>(settings, GetSectionName<T>(), combiner);
-		}
-
-		/// <summary>
-		/// Combines a collection of settings in one instance by specified name
-		/// </summary>
-		/// <typeparam name="T">type of instance of configuration</typeparam>
-		/// <param name="settings">instance of application settings</param>
-		/// <param name="sectionName">section name</param>
-		/// <param name="combiner">combiner</param>
-		public static T Combine<T>(this IAppSettings settings, string sectionName, ICombiner combiner)
-		{
-			bool sectionNotFound = true;
-			T sum = default(T);
-			foreach (var cfg in settings.LoadCollection<T>(sectionName))
-			{
-				sectionNotFound = false;
-				sum = combiner.Combine<T>(sum, cfg);
-			}
-
-			if (sectionNotFound)
+			if (!cfgs.MoveNext())
 				throw new SectionNotFoundException(sectionName, typeof(T));
 
+			T sum = cfgs.Current;
+
+			while (cfgs.MoveNext())
+				sum = settings.Combiner.Combine<T>(sum, cfgs.Current);
+
 			return sum;
 		}
-
-		/// <summary>
-		/// Combines a collection of settings in one instance by specified name and function
-		/// </summary>
-		/// <typeparam name="T">type of instance of configuration</typeparam>
-		/// <param name="settings">instance of application settings</param>
-		/// <param name="sectionName">section name</param>
-		/// <param name="combine">combine function</param>
-		public static T Combine<T>(this IAppSettings settings, string sectionName, Func<T, T, T> combine) where T : class
-		{
-			T sum = settings.LoadCollection<T>(sectionName).Aggregate(null, combine);
-			if (sum == null)
-				throw new SectionNotFoundException(sectionName, typeof(T));
-			return sum;
-		}
-
-		/// <summary>
-		/// Combines a collection of settings in one instance by specified function
-		/// </summary>
-		/// <typeparam name="T">type of instance of configuration</typeparam>
-		/// <param name="settings">instance of application settings</param>
-		/// <param name="combine">combine function</param>
-		public static T Combine<T>(this IAppSettings settings, Func<T, T, T> combine) where T : class
-		{
-			return Combine<T>(settings, GetSectionName<T>(), combine);
-		}
-
-		/// <summary>
-		/// Trying to combines a collection of settings in one instance by specified name and function
-		/// </summary>
-		/// <typeparam name="T">type of instance of configuration</typeparam>
-		/// <param name="settings">instance of application settings</param>
-		/// <param name="sectionName">section name</param>
-		/// <param name="combine">combine function</param>
-		/// <returns>Instance of configuration or null.</returns>
-		public static T TryCombine<T>(this IAppSettings settings, string sectionName, Func<T, T, T> combine) where T : class
-		{
-			return settings.LoadCollection<T>(sectionName).Aggregate(null, combine);
-		}
-
-		/// <summary>
-		/// Trying to combines a collection of settings in one instance by specified function
-		/// </summary>
-		/// <typeparam name="T">type of instance of configuration</typeparam>
-		/// <param name="settings">instance of application settings</param>
-		/// <param name="combine">combine function</param>
-		/// <returns>Instance of configuration or null.</returns>
-		public static T TryCombine<T>(this IAppSettings settings, Func<T, T, T> combine) where T : class
-		{
-			return TryCombine<T>(settings, GetSectionName<T>(), combine);
-		}
-
-		/// <summary>
-		/// Returns a collection of instances of configurations by default name
-		/// </summary>
-		/// <typeparam name="T">type of instance of configuration</typeparam>
-		public static IEnumerable<T> LoadCollection<T>(this IAppSettings settings)
-		{
-			return settings.LoadCollection<T>(GetSectionName<T>());
-		}
+	
+	
 	}
 }
 

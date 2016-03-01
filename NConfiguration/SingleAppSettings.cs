@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace NConfiguration
 {
-	public class SingleAppSettings : IAppSettings_new
+	public class SingleAppSettings : IAppSettings
 	{
 		public SingleAppSettings(IConfigNodeProvider nodeProvider)
 			: this(nodeProvider, DefaultDeserializer.Instance, DefaultCombiner.Instance)

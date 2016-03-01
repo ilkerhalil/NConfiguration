@@ -16,43 +16,12 @@ namespace NConfiguration.Xml
 	/// </summary>
 	public abstract class XmlSettings : CachedConfigNodeProvider, IXmlEncryptable
 	{
-		private readonly IDeserializer _deserializer;
-
 		/// <summary>
 		/// XML root element that contains all the configuration section
 		/// </summary>
 		protected abstract XElement Root { get; }
 
-		/// <summary>
-		/// This settings loaded from a XML document
-		/// </summary>
-		public XmlSettings(IDeserializer deserializer)
-		{
-			_deserializer = deserializer;
-		}
-
 		public IProviderCollection Providers { get; set; }
-
-		/// <summary>
-		/// Returns a collection of instances of configurations
-		/// </summary>
-		/// <typeparam name="T">type of instance of configuration</typeparam>
-		/// <param name="name">section name</param>
-		public IEnumerable<T> LoadCollection<T>(string name)
-		{
-			if (name == null)
-				throw new ArgumentNullException("name");
-
-			if (Root == null)
-				yield break;
-
-			foreach (var at in Root.Attributes().Where(a => NameComparer.Equals(name, a.Name.LocalName)))
-				yield return _deserializer.Deserialize<T>(new ViewPlainField(at.Value));
-
-
-			foreach (var el in Root.Elements().Where(e => NameComparer.Equals(name, e.Name.LocalName)))
-				yield return _deserializer.Deserialize<T>(new XmlViewNode(this, el));
-		}
 
 		protected override IEnumerable<KeyValuePair<string, ICfgNode>> GetAllNodes()
 		{
