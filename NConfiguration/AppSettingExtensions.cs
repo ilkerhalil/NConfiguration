@@ -29,7 +29,7 @@ namespace NConfiguration
 
 		internal static FileMonitor GetMonitoring(this IConfigNodeProvider nodeProvider, string fileName, byte[] expectedContent)
 		{
-			foreach (var node in nodeProvider.ByName(IdentitySectionName))
+			foreach (var node in nodeProvider.ByName(WatchFileSectionName))
 			{
 				var cfg = DefaultDeserializer.Instance.Deserialize<WatchFileConfig>(node);
 				if (cfg.Mode == WatchMode.None)
