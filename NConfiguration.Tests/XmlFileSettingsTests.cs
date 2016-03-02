@@ -36,17 +36,9 @@ namespace NConfiguration
 		}
 		
 		[Test]
-		public void ReadDefaultSection()
-		{
-			var cfg = _settings.TryFirst<MyXmlConfig>("MyCfg3", true);
-			Assert.IsNotNull(cfg);
-			Assert.AreEqual("default", cfg.AttrField);
-		}
-		
-		[Test]
 		public void ReadNullSection()
 		{
-			var cfg = _settings.TryFirst<MyXmlConfig>("MyCfg3", false);
+			var cfg = _settings.TryFirst<MyXmlConfig>("MyCfg3");
 			Assert.IsNull(cfg);
 		}
 		

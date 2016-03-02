@@ -8,21 +8,21 @@ using System.Collections.Generic;
 using NConfiguration.Joining;
 using NConfiguration.Serialization;
 
-namespace NConfiguration.Ini
+namespace NConfiguration.Xml
 {
 	public static class SettingsLoaderExtensions
 	{
-		public static FileSearcher IniFileByExtension(this SettingsLoader loader)
+		public static FileSearcher XmlFileByExtension(this SettingsLoader loader)
 		{
-			var searcher = new FileSearcher(IniFileSettings.Create, "ini");
+			var searcher = new FileSearcher(XmlFileSettings.Create, "xml", "config");
 			loader.AddHandler<IncludeFileConfig>("IncludeFile", searcher);
 			return searcher;
 		}
 
-		public static FileSearcher IniFileBySection(this SettingsLoader loader)
+		public static FileSearcher XmlFileBySection(this SettingsLoader loader)
 		{
-			var searcher = new FileSearcher(IniFileSettings.Create);
-			loader.AddHandler<IncludeFileConfig>("IncludeIniFile", searcher);
+			var searcher = new FileSearcher(XmlFileSettings.Create);
+			loader.AddHandler<IncludeFileConfig>("IncludeXmlFile", searcher);
 			return searcher;
 		}
 	}

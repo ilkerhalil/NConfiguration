@@ -17,8 +17,6 @@ namespace NConfiguration
 	{
 		internal static readonly string IdentitySectionName = "Identity";
 
-		internal static readonly string WatchFileSectionName = "WatchFile";
-
 		internal static string GetIdentitySource(this IConfigNodeProvider nodeProvider, string defaultIdentity)
 		{
 			foreach(var node in nodeProvider.ByName(IdentitySectionName))
@@ -27,21 +25,7 @@ namespace NConfiguration
 			return defaultIdentity;
 		}
 
-		internal static FileMonitor GetMonitoring(this IConfigNodeProvider nodeProvider, string fileName, byte[] expectedContent)
-		{
-			foreach (var node in nodeProvider.ByName(WatchFileSectionName))
-			{
-				var cfg = DefaultDeserializer.Instance.Deserialize<WatchFileConfig>(node);
-				if (cfg.Mode == WatchMode.None)
-					return null;
-
-				return new FileMonitor(fileName, expectedContent, cfg.Mode, cfg.Delay);
-			}
-
-			return null;
-		}
-
-		public static IAppSettings AsSingleSettings(this IConfigNodeProvider nodeProvider)
+		public static SingleAppSettings AsSingleSettings(this IConfigNodeProvider nodeProvider)
 		{
 			return new SingleAppSettings(nodeProvider);
 		}
@@ -129,27 +113,6 @@ namespace NConfiguration
 			throw new SectionNotFoundException(sectionName, typeof(T));
 		}
 
-		public static T TryFirst<T>(this IConfigNodeProvider nodeProvider, bool createDefaultInstance) where T : class
-		{
-			foreach (var node in nodeProvider.ByName(GetSectionName<T>()))
-				return DefaultDeserializer.Instance.Deserialize<T>(node);
-
-			return createDefaultInstance ? Activator.CreateInstance<T>() : null;
-		}
-
-		public static T TryFirst<T>(this IAppSettings settings, bool createDefaultInstance) where T : class
-		{
-			return settings.TryFirst<T>(GetSectionName<T>(), createDefaultInstance);
-		}
-
-		public static T TryFirst<T>(this IAppSettings settings, string sectionName, bool createDefaultInstance) where T : class
-		{
-			foreach (var result in settings.LoadSections<T>(sectionName))
-				return result;
-
-			return createDefaultInstance ? Activator.CreateInstance<T>() : null;
-		}
-
 		public static T Get<T>(this IAppSettings settings)
 		{
 			return settings.Get<T>(GetSectionName<T>());
@@ -169,8 +132,6 @@ namespace NConfiguration
 
 			return sum;
 		}
-	
-	
 	}
 }
 

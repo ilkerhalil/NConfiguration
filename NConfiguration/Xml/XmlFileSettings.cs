@@ -15,6 +15,11 @@ namespace NConfiguration.Xml
 	/// </summary>
 	public class XmlFileSettings : XmlSettings, IFilePathOwner, IIdentifiedSource, IChangeable
 	{
+		public static XmlFileSettings Create(string fileName)
+		{
+			return new XmlFileSettings(fileName);
+		}
+
 		private readonly XElement _root;
 		private readonly FileMonitor _fm;
 
@@ -34,7 +39,7 @@ namespace NConfiguration.Xml
 				_root = XDocument.Load(new MemoryStream(content)).Root;
 				Identity = this.GetIdentitySource(fileName);
 				Path = System.IO.Path.GetDirectoryName(fileName);
-				_fm = this.GetMonitoring(fileName, content);
+				_fm = FileMonitor.TryCreate(this, fileName, content);
 			}
 			catch(SystemException ex)
 			{

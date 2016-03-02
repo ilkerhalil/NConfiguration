@@ -4,11 +4,28 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Threading;
+using NConfiguration.Serialization;
 
 namespace NConfiguration.Monitoring
 {
 	public class FileMonitor
 	{
+		internal static readonly string ConfigSectionName = "WatchFile";
+
+		public static FileMonitor TryCreate(IConfigNodeProvider nodeProvider, string fileName, byte[] expectedContent)
+		{
+			foreach (var node in nodeProvider.ByName(ConfigSectionName))
+			{
+				var cfg = DefaultDeserializer.Instance.Deserialize<WatchFileConfig>(node);
+				if (cfg.Mode == WatchMode.None)
+					return null;
+
+				return new FileMonitor(fileName, expectedContent, cfg.Mode, cfg.Delay);
+			}
+
+			return null;
+		}
+
 		private readonly string _fileName;
 		private readonly byte[] _content;
 

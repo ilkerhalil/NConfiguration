@@ -15,6 +15,11 @@ namespace NConfiguration.Json
 {
 	public class JsonFileSettings : JsonSettings, IFilePathOwner, IIdentifiedSource, IChangeable
 	{
+		public static JsonFileSettings Create(string fileName)
+		{
+			return new JsonFileSettings(fileName);
+		}
+
 		private readonly JObject _obj;
 		private readonly FileMonitor _fm;
 
@@ -33,7 +38,7 @@ namespace NConfiguration.Json
 
 				Identity = this.GetIdentitySource(fileName);
 				Path = System.IO.Path.GetDirectoryName(fileName);
-				_fm = this.GetMonitoring(fileName, content);
+				_fm = FileMonitor.TryCreate(this, fileName, content);
 			}
 			catch(SystemException ex)
 			{

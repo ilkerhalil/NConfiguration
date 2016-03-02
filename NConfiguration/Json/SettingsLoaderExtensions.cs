@@ -8,21 +8,21 @@ using System.Collections.Generic;
 using NConfiguration.Joining;
 using NConfiguration.Serialization;
 
-namespace NConfiguration.Ini
+namespace NConfiguration.Json
 {
 	public static class SettingsLoaderExtensions
 	{
-		public static FileSearcher IniFileByExtension(this SettingsLoader loader)
+		public static FileSearcher JsonFileByExtension(this SettingsLoader loader)
 		{
-			var searcher = new FileSearcher(IniFileSettings.Create, "ini");
+			var searcher = new FileSearcher(JsonFileSettings.Create, "js", "json");
 			loader.AddHandler<IncludeFileConfig>("IncludeFile", searcher);
 			return searcher;
 		}
 
-		public static FileSearcher IniFileBySection(this SettingsLoader loader)
+		public static FileSearcher JsonFileBySection(this SettingsLoader loader)
 		{
-			var searcher = new FileSearcher(IniFileSettings.Create);
-			loader.AddHandler<IncludeFileConfig>("IncludeIniFile", searcher);
+			var searcher = new FileSearcher(JsonFileSettings.Create);
+			loader.AddHandler<IncludeFileConfig>("IncludeJsonFile", searcher);
 			return searcher;
 		}
 	}

@@ -65,6 +65,7 @@
     <Compile Include="Joining\IIncludeHandler.cs" />
     <Compile Include="Joining\MultiSettings.cs" />
     <Compile Include="Joining\SettingsLoader.cs" />
+    <Compile Include="Json\SettingsLoaderExtensions.cs" />
     <Compile Include="SingleAppSettings.cs" />
     <Compile Include="IAppSettings.cs" />
     <Compile Include="DeserializeChildException.cs" />
@@ -76,7 +77,6 @@
     <Compile Include="Serialization\IDeserializerFactory.cs" />
     <Compile Include="Serialization\ViewPlainField.cs" />
     <Compile Include="Json\JsonFileSettings.cs" />
-    <Compile Include="Json\JsonFileSettingsLoader.cs" />
     <Compile Include="Json\JsonSettings.cs" />
     <Compile Include="Json\Parsing\CharEnumerator.cs" />
     <Compile Include="Json\Parsing\JArray.cs" />
@@ -114,6 +114,7 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="CfgNode.cs" />
+    <Compile Include="Xml\SettingsLoaderExtensions.cs" />
     <Compile Include="Xml\XmlViewNode.cs" />
     <Compile Include="Serialization\ICfgNode.cs" />
     <Compile Include="IFilePathOwner.cs" />
@@ -125,13 +126,11 @@
     <Compile Include="Ini\IniSettings.cs" />
     <Compile Include="Ini\ViewSection.cs" />
     <Compile Include="Ini\IniFileSettings.cs" />
-    <Compile Include="Ini\IniFileSettingsLoader.cs" />
     <Compile Include="Joining\FileSearcher.cs" />
     <Compile Include="Xml\XmlFileSettings.cs" />
     <Compile Include="Xml\Protected\IXmlEncryptable.cs" />
     <Compile Include="Xml\Protected\ConfigProtectedData.cs" />
     <Compile Include="Joining\LoadedEventArgs.cs" />
-    <Compile Include="Xml\XmlFileSettingsLoader.cs" />
     <Compile Include="CancelableEventArgs.cs" />
     <Compile Include="Xml\Protected\ProviderLoadingEventArgs.cs" />
     <Compile Include="Xml\Protected\ProviderLoader.cs" />
@@ -140,7 +139,6 @@
     <Compile Include="Xml\PlainXmlSection.cs" />
     <Compile Include="Xml\XmlSystemSettings.cs" />
     <Compile Include="Xml\XmlLinqConversionExtensions.cs" />
-    <Compile Include="Joining\IncludeConfig.cs" />
     <Compile Include="Joining\IncludeFileConfig.cs" />
     <Compile Include="Joining\SearchMode.cs" />
     <Compile Include="Joining\IncludeMode.cs" />

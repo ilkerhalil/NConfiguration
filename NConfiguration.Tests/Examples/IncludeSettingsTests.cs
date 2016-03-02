@@ -20,17 +20,15 @@ namespace NConfiguration.Examples
 		[Test]
 		public void Load()
 		{
-			var xmlFileLoader = new XmlFileSettingsLoader();
-
 			var loader = new SettingsLoader();
-			loader.AddHandler("IncludeXmlFile", xmlFileLoader);
+			loader.XmlFileBySection();
 
 			loader.Loaded += (s,e) => 
 			{
 				Console.WriteLine("Loaded: {0} ({1})", e.Settings.GetType(), e.Settings.Identity);
 			};
 
-			var settings = loader.LoadSettings(xmlFileLoader.LoadFile("Examples/AppDirectory/main.config"));
+			var settings = loader.LoadSettings(new XmlFileSettings("Examples/AppDirectory/main.config"));
 
 			var addCfg = settings.TryGet<ExampleCombineConfig>("AdditionalConfig");
 
@@ -41,19 +39,17 @@ namespace NConfiguration.Examples
 		[Test]
 		public void LoadJson()
 		{
-			var xmlFileLoader = new XmlFileSettingsLoader();
-			var jsonFileLoader = new JsonFileSettingsLoader();
-
 			var loader = new SettingsLoader();
-			loader.AddHandler("IncludeXmlFile", xmlFileLoader);
-			loader.AddHandler("IncludeJsonFile", jsonFileLoader);
+			loader.XmlFileBySection();
+			loader.JsonFileBySection();
+			loader.JsonFileByExtension();
 
 			loader.Loaded += (s, e) =>
 			{
 				Console.WriteLine("Loaded: {0} ({1})", e.Settings.GetType(), e.Settings.Identity);
 			};
 
-			var settings = loader.LoadSettings(xmlFileLoader.LoadFile("Examples/AppDirectory/mainJson.config"));
+			var settings = loader.LoadSettings(new XmlFileSettings("Examples/AppDirectory/mainJson.config"));
 
 			var addCfg = settings.TryGet<ExampleCombineConfig>("AdditionalConfig");
 
@@ -64,16 +60,14 @@ namespace NConfiguration.Examples
 		[Test]
 		public void AutoCombineLoad()
 		{
-			var xmlFileLoader = new XmlFileSettingsLoader();
-
 			var loader = new SettingsLoader();
-			loader.AddHandler("IncludeXmlFile", xmlFileLoader);
+			loader.XmlFileBySection();
 			loader.Loaded += (s, e) =>
 			{
 				Console.WriteLine("Loaded: {0} ({1})", e.Settings.GetType(), e.Settings.Identity);
 			};
 
-			var settings = loader.LoadSettings(xmlFileLoader.LoadFile("Examples/AppDirectory/autoMain.config"));
+			var settings = loader.LoadSettings(new XmlFileSettings("Examples/AppDirectory/autoMain.config"));
 
 			var cfg = settings.TryGet<ChildAutoCombinableConnectionConfig>();
 
@@ -87,10 +81,9 @@ namespace NConfiguration.Examples
 			KeyManager.Create();
 
 			var providerLoader = new ProviderLoader();
-			var xmlFileLoader = new XmlFileSettingsLoader();
 
 			var loader = new SettingsLoader();
-			loader.AddHandler("IncludeXmlFile", xmlFileLoader);
+			loader.XmlFileBySection();
 			loader.Loaded += providerLoader.TryExtractConfigProtectedData;
 			
 			loader.Loaded += (s, e) =>
@@ -98,7 +91,7 @@ namespace NConfiguration.Examples
 				Console.WriteLine("Loaded: {0} ({1})", e.Settings.GetType(), e.Settings.Identity);
 			};
 
-			var settings = loader.LoadSettings(xmlFileLoader.LoadFile("Examples/AppDirectory/secureMain.config"));
+			var settings = loader.LoadSettings(new XmlFileSettings("Examples/AppDirectory/secureMain.config"));
 
 			var addCfg = settings.TryGet<ExampleCombineConfig>("AdditionalConfig");
 

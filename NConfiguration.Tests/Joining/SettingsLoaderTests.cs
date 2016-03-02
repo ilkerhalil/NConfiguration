@@ -15,11 +15,10 @@ namespace NConfiguration.Tests.Joining
 		[Test]
 		public void IncludeInMiddle()
 		{
-			var xmlFileLoader = new XmlFileSettingsLoader();
 			var loader = new SettingsLoader();
-			loader.AddHandler<IncludeFileConfig>("IncludeXmlFile", xmlFileLoader);
+			loader.XmlFileBySection();
 
-			var settings = loader.LoadSettings(xmlFileLoader.LoadFile("Joining/AppDirectory/main.config"));
+			var settings = loader.LoadSettings(XmlFileSettings.Create("Joining/AppDirectory/main.config"));
 
 			Assert.That(settings.LoadSections<AdditionalConfig>().Select(_ => _.F), Is.EquivalentTo(new[] { "InMainPre", "InAdditional", "InMainPost" }));
 		}

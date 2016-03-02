@@ -41,14 +41,10 @@ namespace NConfiguration.Including
 
 		private static IAppSettings LoadSettings(string file)
 		{
-			var xmlFileLoader = new XmlFileSettingsLoader();
-			var jsonFileLoader = new JsonFileSettingsLoader();
-			var iniFileLoader = new IniFileSettingsLoader();
-
 			var loader = new SettingsLoader();
-			loader.AddHandler("IncludeXmlFile", xmlFileLoader);
-			loader.AddHandler("IncludeJsonFile", jsonFileLoader);
-			loader.AddHandler("IncludeIniFile", iniFileLoader);
+			loader.XmlFileBySection();
+			loader.JsonFileBySection();
+			loader.IniFileBySection();
 
 			loader.Loaded += (s, e) =>
 			{
@@ -56,9 +52,9 @@ namespace NConfiguration.Including
 			};
 
 			if (Path.GetExtension(file) == ".xml")
-				return loader.LoadSettings(xmlFileLoader.LoadFile(Path.Combine("Including", file)));
+				return loader.LoadSettings(new XmlFileSettings(Path.Combine("Including", file)));
 			else
-				return loader.LoadSettings(jsonFileLoader.LoadFile(Path.Combine("Including", file)));
+				return loader.LoadSettings(new JsonFileSettings(Path.Combine("Including", file)));
 		}
 
 		public class OneField

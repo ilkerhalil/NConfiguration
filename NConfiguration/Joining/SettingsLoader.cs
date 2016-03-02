@@ -7,6 +7,8 @@ using System.Xml.Serialization;
 using System.Collections.Generic;
 using NConfiguration.Serialization;
 using NConfiguration.Combination;
+using NConfiguration.Monitoring;
+using System.Runtime.Serialization;
 
 namespace NConfiguration.Joining
 {
@@ -46,7 +48,6 @@ namespace NConfiguration.Joining
 			handlers.Add((target, cfgNode) => handler.TryLoad(target, _deserializer.Deserialize<T>(cfgNode)));
 		}
 
-
 		public event EventHandler<LoadedEventArgs> Loaded;
 
 		private void OnLoaded(IIdentifiedSource settings)
@@ -78,7 +79,7 @@ namespace NConfiguration.Joining
 			foreach(var pair in source.Items)
 			{
 				if (NameComparer.Equals(pair.Key, AppSettingExtensions.IdentitySectionName) ||
-					NameComparer.Equals(pair.Key, AppSettingExtensions.WatchFileSectionName))
+					NameComparer.Equals(pair.Key, FileMonitor.ConfigSectionName))
 					continue;
 
 				List<Include> hadlers;
@@ -95,7 +96,13 @@ namespace NConfiguration.Joining
 				if (includeSettings == null)
 					throw new NotSupportedException("any registered handlers returned null");
 
-				foreach (var cnProvider in includeSettings)
+				var includeSettingsArray = includeSettings.ToArray();
+				var includeRequired = DefaultDeserializer.Instance.Deserialize<RequiredContainConfig>(pair.Value).Required;
+
+				if(includeRequired && includeSettingsArray.Length == 0)
+					throw new ApplicationException(string.Format("include setting from section '{0}' not found", pair.Key));
+
+				foreach (var cnProvider in includeSettingsArray)
 				{
 					if (CheckLoaded(cnProvider))
 						continue;
@@ -107,6 +114,12 @@ namespace NConfiguration.Joining
 						yield return includePair;
 				}
 			}
+		}
+
+		internal class RequiredContainConfig
+		{
+			[DataMember(Name = "Required", IsRequired = false)]
+			public bool Required { get; set; }
 		}
 
 		private bool CheckLoaded(IIdentifiedSource settings)
@@ -147,6 +160,7 @@ namespace NConfiguration.Joining
 				return _type.GetHashCode() ^ _id.GetHashCode();
 			}
 		}
+
 	}
 }
 

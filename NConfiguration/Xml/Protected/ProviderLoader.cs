@@ -127,12 +127,19 @@ namespace NConfiguration.Xml.Protected
 
 		public ProviderLoader TryLoadAppSettings(IConfigNodeProvider provider)
 		{
-			var cfg = provider.TryFirst<ConfigProtectedData>(false);
-			if (cfg == null)
-				return this;
-
-			LoadConfig(cfg);
+			var cfg = TryGetConfig(provider);
+			if (cfg != null)
+				LoadConfig(cfg);
+			
 			return this;
+		}
+
+		private ConfigProtectedData TryGetConfig(IConfigNodeProvider nodeProvider)
+		{
+			foreach (var node in nodeProvider.ByName(typeof(ConfigProtectedData).GetSectionName()))
+				return DefaultDeserializer.Instance.Deserialize<ConfigProtectedData>(node);
+
+			return null;
 		}
 
 		public ProviderLoader LoadAppSettings(IAppSettings settings)
