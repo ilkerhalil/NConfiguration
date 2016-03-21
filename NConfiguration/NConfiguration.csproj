@@ -59,6 +59,7 @@
     <Compile Include="Combination\ICombiner%271.cs" />
     <Compile Include="Combination\ICombinerFactory.cs" />
     <Compile Include="BaseConfigNodeProvider.cs" />
+    <Compile Include="Combination\UnionCollectionCombiner.cs" />
     <Compile Include="DefaultConfigNodeProvider.cs" />
     <Compile Include="CachedConfigNodeProvider.cs" />
     <Compile Include="IConfigNodeProvider.cs" />
