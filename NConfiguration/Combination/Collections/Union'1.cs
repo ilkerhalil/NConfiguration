@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NConfiguration.Combination
+namespace NConfiguration.Combination.Collections
 {
-	public class UnionCollectionCombiner<T> :
+	public class Union<T> :
 		ICombiner<T[]>,
 		ICombiner<IList<T>>,
 		ICombiner<List<T>>,

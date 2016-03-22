@@ -74,15 +74,22 @@ namespace NConfiguration.Combination
 
 		private static object TryCreateComplexCombiner(Type targetType)
 		{
-			var builder = new ComplexFunctionBuilder(targetType);
+			try
+			{
+				var builder = new ComplexFunctionBuilder(targetType);
 
-			foreach (var fi in targetType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public))
-				builder.Add(fi);
+				foreach (var fi in targetType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public))
+					builder.Add(fi);
 
-			foreach (var pi in targetType.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public))
-				builder.Add(pi);
+				foreach (var pi in targetType.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public))
+					builder.Add(pi);
 
-			return builder.Compile();
+				return builder.Compile();
+			}
+			catch (Exception ex)
+			{
+				throw new InvalidOperationException(string.Format("can't create combiner for type {0}", targetType.FullName), ex);
+			}
 		}
 
 		internal static object TryCreateAsAttribute(Type targetType)

@@ -40,7 +40,7 @@ namespace NConfiguration.Combination
 				return Activator.CreateInstance(combinerType);
 			}
 
-			throw new InvalidOperationException("supported combiner not found");
+			throw new InvalidOperationException(string.Format("supported combiner for type '{0}' not found", targetType.FullName));
 		}
 	}
 }

@@ -14,7 +14,7 @@ namespace NConfiguration
 	{
 		private IAppSettings _settings;
 		
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void SetUp()
 		{
 			_settings = new XmlFileSettings("testConfig1.xml".ResolveTestPath()).ToAppSettings();

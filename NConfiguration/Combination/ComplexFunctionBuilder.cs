@@ -71,17 +71,24 @@ namespace NConfiguration.Combination
 
 		private Expression CallMemberCombiner(MemberInfo mi, Type targetType, Expression prev, Expression next)
 		{
-			var combinerAttr = mi.GetCustomAttributes(false).OfType<ICombinerFactory>().SingleOrDefault();
-			if (combinerAttr == null)
+			try
 			{
-				var combineMI = typeof(ICombiner).GetMethod("Combine").MakeGenericMethod(targetType);
-				return Expression.Call(_pCombiner, combineMI, _pCombiner, prev, next);
+				var combinerAttr = mi.GetCustomAttributes(false).OfType<ICombinerFactory>().SingleOrDefault();
+				if (combinerAttr == null)
+				{
+					var combineMI = typeof(ICombiner).GetMethod("Combine").MakeGenericMethod(targetType);
+					return Expression.Call(_pCombiner, combineMI, _pCombiner, prev, next);
+				}
+				else
+				{
+					var customCombiner = Expression.Constant(combinerAttr.CreateInstance(targetType));
+					var combineMI = typeof(ICombiner<>).MakeGenericType(targetType).GetMethod("Combine");
+					return Expression.Call(customCombiner, combineMI, _pCombiner, prev, next);
+				}
 			}
-			else
+			catch(Exception ex)
 			{
-				var customCombiner = Expression.Constant(combinerAttr.CreateInstance(targetType));
-				var combineMI = typeof(ICombiner<>).MakeGenericType(targetType).GetMethod("Combine");
-				return Expression.Call(customCombiner, combineMI, _pCombiner, prev, next);
+				throw new InvalidOperationException(string.Format("can't create combiner for {0} member", mi.Name), ex);
 			}
 		}
 

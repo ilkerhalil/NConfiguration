@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Combination\Collections\UnionCombiners.cs" />
     <Compile Include="Combination\CombinableTestStruct.cs" />
     <Compile Include="Combination\DefaultCombinationTests\ChildCombinerTests.cs" />
     <Compile Include="Combination\DefaultCombinationTests\AutoCombinerTests.cs" />
