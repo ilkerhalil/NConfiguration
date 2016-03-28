@@ -12,7 +12,7 @@ namespace RsaToolkit
 	{
 		private string _safeCurrentDirectory;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void SetUp()
 		{
 			var testsDir = Path.GetDirectoryName(GetType().Assembly.Location);
@@ -24,7 +24,7 @@ namespace RsaToolkit
 			Environment.CurrentDirectory = tmpDir;
 		}
 
-		[TestFixtureTearDown]
+		[OneTimeTearDown]
 		public void TearDown()
 		{
 			Environment.CurrentDirectory = _safeCurrentDirectory;
