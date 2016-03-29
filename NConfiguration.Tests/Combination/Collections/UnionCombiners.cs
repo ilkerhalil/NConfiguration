@@ -36,11 +36,34 @@ namespace NConfiguration.Tests.Combination.Collections
 		public class TestClass
 		{
 			[Combiner(typeof(Union<string>))]
-			//[Combiner(typeof(Union<>))]
 			public List<string> List;
 
 			[Combiner(typeof(Union<int>))]
 			public ICollection<int> Collection;
+		}
+
+		[Test]
+		public void GenericTypeInAttribute()
+		{
+			var x = new GenTestClass()
+			{
+				List = new List<string>() { "L1" },
+			};
+
+			var y = new GenTestClass()
+			{
+				List = new List<string>() { "L2" },
+			};
+
+			var combined = DefaultCombiner.Instance.Combine(x, y);
+
+			Assert.That(combined.List, Is.EquivalentTo(new[] { "L1", "L2" }));
+		}
+
+		public class GenTestClass
+		{
+			[Combiner(typeof(Union<>))]
+			public List<string> List;
 		}
 
 		[Test]

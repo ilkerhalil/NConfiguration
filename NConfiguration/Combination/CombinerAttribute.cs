@@ -22,25 +22,54 @@ namespace NConfiguration.Combination
 			if (targetType == null)
 				throw new ArgumentNullException("targetType");
 
-			foreach (var candidate in CombinerTypes)
+			var requiredCombinerType = typeof(ICombiner<>).MakeGenericType(targetType);
+
+
+			var candidate = CombinerTypes.SelectMany(ct => GetVariants(ct, targetType)).FirstOrDefault(_ => requiredCombinerType.IsAssignableFrom(_));
+
+			if(candidate == null)
+				throw new InvalidOperationException(string.Format("supported combiner for type '{0}' not found", targetType.FullName));
+
+			return Activator.CreateInstance(candidate);
+		}
+
+		private static Type TryMakeCombinerType(Type genericCombinerType, Type targetType)
+		{
+			try
 			{
-				Type combinerType;
-				try
-				{
-					combinerType = candidate.MakeGenericType(targetType);
-				}
-				catch (InvalidOperationException)
-				{
-					combinerType = candidate;
-				}
-
-				if (!typeof(ICombiner<>).MakeGenericType(targetType).IsAssignableFrom(combinerType))
-					continue;
-
-				return Activator.CreateInstance(combinerType);
+				return genericCombinerType.MakeGenericType(targetType);
 			}
+			catch (InvalidOperationException)
+			{
+				return null;
+			}
+		}
 
-			throw new InvalidOperationException(string.Format("supported combiner for type '{0}' not found", targetType.FullName));
+		private static IEnumerable<Type> GetVariantGenericArgument(Type targetType)
+		{
+			yield return targetType;
+
+			if(targetType.IsGenericType)
+			{
+				var genArgs = targetType.GetGenericArguments();
+				if (genArgs.Length == 1)
+					yield return genArgs[0];
+			}
+		}
+
+		private static IEnumerable<Type> GetVariants(Type combinerType, Type targetType)
+		{
+			if(combinerType.IsGenericTypeDefinition)
+			{
+				foreach(var genArg in GetVariantGenericArgument(targetType))
+				{
+					var candidate = TryMakeCombinerType(combinerType, genArg);
+					if (candidate != null)
+						yield return candidate;
+				}
+			}
+			else
+				yield return combinerType;
 		}
 	}
 }
