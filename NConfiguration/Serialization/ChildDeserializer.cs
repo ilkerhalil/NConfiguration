@@ -42,7 +42,7 @@ namespace NConfiguration.Serialization
 		{
 			object deserialize;
 			if (_funcMap.TryGetValue(typeof(T), out deserialize))
-				return ((Deserialize<T>)deserialize)(this, node);
+				return ((Deserialize<T>)deserialize)(_parent, node);
 
 			return _parent.Deserialize<T>(context, node);
 		}

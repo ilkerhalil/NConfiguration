@@ -40,5 +40,45 @@ namespace NConfiguration.Tests.Combination.DefaultCombinationTests
 			Assert.That(combined.P1, Is.EqualTo("xP1,yP1"));
 			Assert.That(combined.P2, Is.EqualTo(1));
 		}
+
+		[Test]
+		public void InnerOverrides()
+		{
+			var x = new TestClass()
+			{
+				F1 = "xF1",
+				Inner = new TestClass()
+				{
+					F1 = "xiF1"
+				}
+			};
+
+			var y = new TestClass()
+			{
+				F1 = "yF1",
+				Inner = new TestClass()
+				{
+					F1 = "yiF1"
+				}
+			};
+
+			var childCombiner = new ChildCombiner(DefaultCombiner.Instance);
+			childCombiner.SetCombiner<TestClass>((ctx, prev, next) => prev == null ? next : next == null ? prev : new TestClass()
+			{
+				F1 = prev.F1 + "," + next.F1,
+				Inner = prev.Inner == null ? next.Inner : next.Inner == null ? prev.Inner : ctx.Combine(prev.Inner, next.Inner)
+			});
+
+			var combined = childCombiner.Combine(x, y);
+
+			Assert.That(combined.F1, Is.EqualTo("xF1,yF1"));
+			Assert.That(combined.Inner.F1, Is.EqualTo("xiF1,yiF1"));
+		}
+
+		public class TestClass
+		{
+			public string F1;
+			public TestClass Inner;
+		}
 	}
 }

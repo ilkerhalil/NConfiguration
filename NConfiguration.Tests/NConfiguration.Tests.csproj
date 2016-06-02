@@ -97,6 +97,7 @@
     <Compile Include="Monitoring\FileMonitorTests.cs" />
     <Compile Include="Protected\XmlCryptoProvidersTests.cs" />
     <Compile Include="CombinableAppSettingsTests.cs" />
+    <Compile Include="Serialization\ChildDeserializerTests.cs" />
     <Compile Include="Serialization\PlaceHolderDeserializer.cs" />
     <Compile Include="Serialization\TestAttrClass.cs" />
     <Compile Include="Serialization\TestGenericAttrClass.cs" />
