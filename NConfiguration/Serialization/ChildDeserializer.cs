@@ -47,9 +47,10 @@ namespace NConfiguration.Serialization
 		/// </summary>
 		/// <typeparam name="T">required type</typeparam>
 		/// <param name="deserialize">deserialize function</param>
-		public void SetDeserializer<T>(ChildDeserializeDefinition<T> deserialize)
+		public ChildDeserializer SetDeserializer<T>(ChildDeserializeDefinition<T> deserialize)
 		{
 			_funcMap[typeof(T)] = deserialize;
+			return this;
 		}
 		
 		/// <summary>
@@ -57,10 +58,30 @@ namespace NConfiguration.Serialization
 		/// </summary>
 		/// <typeparam name="T">required type</typeparam>
 		/// <param name="deserializer">deserializer</param>
-		public void SetDeserializer<T>(IDeserializer<T> deserializer)
+		public ChildDeserializer SetDeserializer<T>(IDeserializer<T> deserializer)
 		{
 			ChildDeserializeDefinition<T> func = (context, node) => deserializer.Deserialize(context.Current, node);
 			_funcMap[typeof(T)] = func;
+			return this;
+		}
+
+		/// <summary>
+		/// override current context in deserialization of specified type
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="overrider"></param>
+		/// <returns></returns>
+		public IDeserializer CurrentOverride<T>(Func<IDeserializer, IDeserializer> overrider)
+		{
+			return SetDeserializer((context, node) => context.Parent.Deserialize<T>(overrider(context.Current), node));
+		}
+
+		/// <summary>
+		/// Convert any deserialized value of specified type
+		/// </summary>
+		public ChildDeserializer Convert<T>(Func<T, T> converter)
+		{
+			return SetDeserializer((context, node) => converter(context.Deserialize<T>(node)));
 		}
 
 		public T Deserialize<T>(IDeserializer context, ICfgNode node)

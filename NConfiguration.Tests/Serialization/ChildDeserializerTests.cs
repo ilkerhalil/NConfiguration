@@ -44,20 +44,18 @@ namespace NConfiguration.Serialization
 		}
 
 		[Test]
-		public void SequentialOverride()
+		public void SequentialConverters()
 		{
 			var root =
 @"<Root Text='text' Number='123' />".ToXmlView();
 
-			var cd1 = new ChildDeserializer(DefaultDeserializer.Instance);
-			cd1.SetDeserializer((context, node) => context.Deserialize<string>(node) + "_S");
-			cd1.SetDeserializer((context, node) =>
-			{
-				var result = context.Deserialize<Test>(node);
-				result.Text += "_T";
-				return result;
-			});
-
+			var cd1 = new ChildDeserializer(DefaultDeserializer.Instance)
+				.Convert<string>(_ => _ + "_S")
+				.Convert<Test>(_ =>
+				{
+					_.Text += "_T";
+					return _;
+				});
 
 			var item = cd1.Deserialize<Test>(root);
 
@@ -148,33 +146,35 @@ namespace NConfiguration.Serialization
 		public void SpecialContextOverride()
 		{
 			var root =
-@"<Root Text='text_{$x}_{$y}_{$z}' Number='1200'>
-	<Inner Text='text_{$x}_{$y}_{$z}' Number='1300'/>
-	<RecursiveInner Text='text_{$x}_{$y}_{$z}' />
+@"<Root Text='text_{$x}_{$y}_{$z}' Number='1'>
+	<Inner Text='text_{$x}_{$y}_{$z}' Number='1'/>
+	<RecursiveInner Text='text_{$x}_{$y}_{$z}' Number='1'/>
 </Root>
 ".ToXmlView();
 
-			var cd1 = new ChildDeserializer(DefaultDeserializer.Instance);
-			cd1.SetDeserializer((context, node) => context.Deserialize<string>(node).Replace("{$x}", "X"));
-			cd1.SetDeserializer((context, node) =>
-			{
-				var newContext = new ChildDeserializer(context.Current);
-				newContext.SetDeserializer((context2, node2) => context2.Deserialize<string>(node2).Replace("{$y}", "Y"));
-				return context.Deserialize<Test>(newContext, node);
-			});
+			var cd1 = new ChildDeserializer(DefaultDeserializer.Instance)
+				.Convert<string>(_ => _.Replace("{$x}", "X"))
+				.CurrentOverride<Test>(current => new ChildDeserializer(current)
+					.Convert<string>(_ => _.Replace("{$y}", "Y"))
+					.Convert<int>(_ => _ * 3));
 
-			var cd2 = new ChildDeserializer(cd1);
-			cd2.SetDeserializer((context, node) => context.Deserialize<string>(node).Replace("{$z}", "Z"));
+			var cd2 = new ChildDeserializer(cd1)
+				.Convert<string>(_ => _.Replace("{$z}", "Z"))
+				.Convert<int>(_ => _ * 7);
 
 			var item = cd2.Deserialize<OuterTest>(root);
 
 			Assert.That(item.Text, Is.EqualTo("text_X_{$y}_Z"));
 			Assert.That(item.Inner.Text, Is.EqualTo("text_X_Y_Z"));
 			Assert.That(item.RecursiveInner.Text, Is.EqualTo("text_X_{$y}_Z"));
+
+			Assert.That(item.Number, Is.EqualTo(7));
+			Assert.That(item.Inner.Number, Is.EqualTo(3 * 7));
+			Assert.That(item.RecursiveInner.Number, Is.EqualTo(7));
 		}
 
 		[Test]
-		public void SpecialContextReplace()
+		public void ReplaceSpecifyType()
 		{
 			var root =
 @"<Root Text='text_{$x}_{$z}' Number='100'>
@@ -183,16 +183,16 @@ namespace NConfiguration.Serialization
 </Root>
 ".ToXmlView();
 
-			var cdR = new ChildDeserializer(DefaultDeserializer.Instance);
-			cdR.SetDeserializer((context, node) => context.Deserialize<string>(node).Replace("{$x}", "Xr").Replace("{$z}", "Zr"));
+			var cdR = new ChildDeserializer(DefaultDeserializer.Instance)
+				.Convert<string>(_ => _.Replace("{$x}", "Xr").Replace("{$z}", "Zr"));
 
-			var cd1 = new ChildDeserializer(DefaultDeserializer.Instance);
-			cd1.SetDeserializer((context, node) => context.Deserialize<int>(node) + 1);
-			cd1.SetDeserializer((context, node) => context.Deserialize<string>(node).Replace("{$x}", "X"));
-			cd1.SetDeserializer((context, node) => cdR.Deserialize<Test>(node));
+			var cd1 = new ChildDeserializer(DefaultDeserializer.Instance)
+				.Convert<int>(_ => _ + 1)
+				.Convert<string>(_ => _.Replace("{$x}", "X"))
+				.SetDeserializer((context, node) => cdR.Deserialize<Test>(node));
 
-			var cd2 = new ChildDeserializer(cd1);
-			cd2.SetDeserializer((context, node) => context.Deserialize<string>(node).Replace("{$z}", "Z"));
+			var cd2 = new ChildDeserializer(cd1)
+				.Convert<string>(_ => _.Replace("{$z}", "Z"));
 
 			var item = cd2.Deserialize<OuterTest>(root);
 
@@ -203,6 +203,41 @@ namespace NConfiguration.Serialization
 			Assert.That(item.Number, Is.EqualTo(101));
 			Assert.That(item.Inner.Number, Is.EqualTo(100));
 			Assert.That(item.RecursiveInner.Number, Is.EqualTo(101));
+		}
+
+		[Test]
+		public void OverrideContextInSpecifyType()
+		{
+			var root =
+@"<Root Text='text_{$x}_{$z}' Number='100'>
+	<Inner Text='text_{$x}_{$z}' Number='100'/>
+	<RecursiveInner Text='text_{$x}_{$z}' Number='100'>
+		<Inner Text='text_{$x}_{$z}' Number='100'/>
+	</RecursiveInner>
+</Root>
+".ToXmlView();
+
+			var cd1 = new ChildDeserializer(DefaultDeserializer.Instance)
+				.Convert<int>(_ => _ + 1)
+				.Convert<string>(_ => _.Replace("{$x}", "X"))
+
+				.CurrentOverride<Test>((current) => new ChildDeserializer(current)
+					.SetDeserializer((context, node) => DefaultDeserializer.Instance.Deserialize<string>(node).Replace("{$x}", "Xreplaced").Replace("{$z}", "Zreplaced")));
+
+			var cd2 = new ChildDeserializer(cd1)
+				.Convert<string>(_ => _.Replace("{$z}", "Z"));
+
+			var item = cd2.Deserialize<OuterTest>(root);
+
+			Assert.That(item.Text, Is.EqualTo("text_X_Z"));
+			Assert.That(item.Inner.Text, Is.EqualTo("text_Xreplaced_Zreplaced"));
+			Assert.That(item.RecursiveInner.Text, Is.EqualTo("text_X_Z"));
+			Assert.That(item.RecursiveInner.Inner.Text, Is.EqualTo("text_Xreplaced_Zreplaced"));
+
+			Assert.That(item.Number, Is.EqualTo(101));
+			Assert.That(item.Inner.Number, Is.EqualTo(101));
+			Assert.That(item.RecursiveInner.Number, Is.EqualTo(101));
+			Assert.That(item.RecursiveInner.Inner.Number, Is.EqualTo(101));
 		}
 
 		public class Test
