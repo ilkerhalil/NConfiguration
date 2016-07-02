@@ -117,6 +117,9 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="CfgNode.cs" />
+    <Compile Include="Variables\CfgNodeWrapper.cs" />
+    <Compile Include="Variables\ValueRenderer.cs" />
+    <Compile Include="Variables\VariableStorage.cs" />
     <Compile Include="Xml\SettingsLoaderExtensions.cs" />
     <Compile Include="Xml\XmlViewNode.cs" />
     <Compile Include="ICfgNode.cs" />

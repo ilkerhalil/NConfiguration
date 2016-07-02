@@ -11,7 +11,7 @@ namespace NConfiguration
 		private readonly Lazy<string> _textLazy;
 		private readonly Lazy<IEnumerable<KeyValuePair<string, ICfgNode>>> _nestedNodes;
 
-		public CfgNode()
+		protected CfgNode()
 		{
 			_textLazy = new Lazy<string>(GetNodeText);
 			_nestedNodes = new Lazy<IEnumerable<KeyValuePair<string, ICfgNode>>>(CopyNestedNodes);

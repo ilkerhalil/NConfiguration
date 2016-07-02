@@ -27,8 +27,6 @@ namespace NConfiguration.Xml
 		/// settings loaded from a file
 		/// </summary>
 		/// <param name="fileName">file name</param>
-		/// <param name="converter"></param>
-		/// <param name="deserializer">deserializer</param>
 		public XmlFileSettings(string fileName)
 		{
 			try

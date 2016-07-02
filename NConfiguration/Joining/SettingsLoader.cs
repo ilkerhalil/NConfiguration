@@ -14,9 +14,23 @@ namespace NConfiguration.Joining
 {
 	public sealed class SettingsLoader
 	{
+		public delegate ICfgNode CfgNodeConverter(string name, ICfgNode candidate);
+
 		private delegate IEnumerable<IIdentifiedSource> Include(IConfigNodeProvider target, IDeserializer deserializer, ICfgNode config);
+	
+		private readonly CfgNodeConverter _cfgNodeConverter;
 
 		private readonly Dictionary<string, List<Include>> _includeHandlers = new Dictionary<string, List<Include>>(NameComparer.Instance);
+
+		public SettingsLoader()
+		{
+			_cfgNodeConverter = (_, node) => node;
+		}
+
+		public SettingsLoader(CfgNodeConverter cfgNodeConverter)
+		{
+			_cfgNodeConverter = cfgNodeConverter;
+		}
 
 		public void AddHandler<T>(IIncludeHandler<T> handler)
 		{
@@ -63,29 +77,35 @@ namespace NConfiguration.Joining
 		{
 			foreach(var pair in source.Items)
 			{
-				if (NameComparer.Equals(pair.Key, AppSettingExtensions.IdentitySectionName) ||
-					NameComparer.Equals(pair.Key, FileMonitor.ConfigSectionName))
+				var configName = pair.Key;
+
+				if (NameComparer.Equals(configName, AppSettingExtensions.IdentitySectionName) ||
+					NameComparer.Equals(configName, FileMonitor.ConfigSectionName))
+					continue;
+
+				var configNode = _cfgNodeConverter(configName, pair.Value);
+				if (configNode == null)
 					continue;
 
 				List<Include> hadlers;
-				if (!_includeHandlers.TryGetValue(pair.Key, out hadlers))
+				if (!_includeHandlers.TryGetValue(configName, out hadlers))
 				{
-					yield return pair;
+					yield return new KeyValuePair<string, ICfgNode>(configName, configNode);
 					continue;
 				}
 
 				var includeSettings = hadlers
-					.Select(_ => _(source, context.Deserializer, pair.Value))
+					.Select(_ => _(source, context.Deserializer, configNode))
 					.FirstOrDefault(_ => _ != null);
 
 				if (includeSettings == null)
 					throw new NotSupportedException("any registered handlers returned null");
 
 				var includeSettingsArray = includeSettings.ToArray();
-				var includeRequired = DefaultDeserializer.Instance.Deserialize<RequiredContainConfig>(pair.Value).Required;
+				var includeRequired = context.Deserializer.Deserialize<RequiredContainConfig>(configNode).Required;
 
 				if(includeRequired && includeSettingsArray.Length == 0)
-					throw new ApplicationException(string.Format("include setting from section '{0}' not found", pair.Key));
+					throw new ApplicationException(string.Format("include setting from section '{0}' not found", configName));
 
 				foreach (var cnProvider in includeSettingsArray)
 				{

@@ -1,3 +1,4 @@
+using System;
 using System.Xml;
 using System.Xml.Linq;
 using NConfiguration.Xml.Protected;
@@ -7,6 +8,7 @@ using NConfiguration.Tests;
 using NConfiguration.Ini;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 
 namespace NConfiguration
 {
@@ -19,8 +21,8 @@ namespace NConfiguration
 
 		public static string ResolveTestPath(this string relativePath)
 		{
-			var testDir = Path.GetDirectoryName(typeof(ExtensionsForTests).Assembly.Location);
-			return Path.Combine(testDir, relativePath);
+			string exeDirectory = Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath);
+			return Path.Combine(exeDirectory, relativePath);
 		}
 
 		public static IIdentifiedSource ToXmlSettings(this string text)
