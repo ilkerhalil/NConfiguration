@@ -16,7 +16,7 @@ namespace NConfiguration.Joining
 	{
 		public delegate ICfgNode CfgNodeConverter(string name, ICfgNode candidate);
 
-		private delegate IEnumerable<IIdentifiedSource> Include(IConfigNodeProvider target, IDeserializer deserializer, ICfgNode config);
+		private delegate IEnumerable<IIdentifiedSource> Include(IConfigNodeProvider target, IDeserializer deserializer, ICfgNode config, string searchPath);
 	
 		private readonly CfgNodeConverter _cfgNodeConverter;
 
@@ -45,7 +45,7 @@ namespace NConfiguration.Joining
 				handlers = new List<Include>();
 				_includeHandlers.Add(sectionName, handlers);
 			}
-			handlers.Add((target, deserializer, cfgNode) => handler.TryLoad(target, deserializer.Deserialize<T>(cfgNode)));
+			handlers.Add((target, deserializer, cfgNode, searchPath) => handler.TryLoad(target, deserializer.Deserialize<T>(cfgNode), searchPath));
 		}
 
 		public event EventHandler<LoadedEventArgs> Loaded;
@@ -62,9 +62,16 @@ namespace NConfiguration.Joining
 			return LoadSettings(setting, DefaultDeserializer.Instance);
 		}
 
-		public ChangeableConfigNodeProvider LoadSettings(IIdentifiedSource setting, IDeserializer deserializer)
+		public ChangeableConfigNodeProvider LoadSettings(IIdentifiedSource setting, IDeserializer deserializer, string searchPath = null)
 		{
-			var context = new Context(deserializer);
+			if(searchPath == null)
+			{
+				var rpo = setting as IFilePathOwner;
+				if (rpo != null)
+					searchPath = rpo.Path;
+			}
+
+			var context = new Context(deserializer, searchPath);
 
 			context.FirstChange.Observe(setting as IChangeable);
 			OnLoaded(setting);
@@ -95,7 +102,7 @@ namespace NConfiguration.Joining
 				}
 
 				var includeSettings = hadlers
-					.Select(_ => _(source, context.Deserializer, configNode))
+					.Select(_ => _(source, context.Deserializer, configNode, context.SearchPath))
 					.FirstOrDefault(_ => _ != null);
 
 				if (includeSettings == null)
@@ -129,14 +136,16 @@ namespace NConfiguration.Joining
 
 		private class Context
 		{
+			public readonly string SearchPath;
 			public readonly IDeserializer Deserializer;
 			public readonly FirstChange FirstChange = new FirstChange();
 
 			private readonly HashSet<IdentityKey> _loaded = new HashSet<IdentityKey>();
 
-			public Context(IDeserializer deserializer)
+			public Context(IDeserializer deserializer, string searchPath)
 			{
 				Deserializer = deserializer;
+				SearchPath = searchPath;
 			}
 
 			public bool CheckLoaded(IIdentifiedSource settings)

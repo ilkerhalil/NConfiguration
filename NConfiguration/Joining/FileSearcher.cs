@@ -23,41 +23,57 @@ namespace NConfiguration.Joining
 
 		public event EventHandler<FindingSettingsArgs> FindingSettings;
 
-		private void OnFindingSettings(IConfigNodeProvider source, IncludeFileConfig cfg)
+		private void OnFindingSettings(IConfigNodeProvider source, IncludeFileConfig cfg, string searchPath)
 		{
 			var copy = FindingSettings;
 			if (copy != null)
-				copy(this, new FindingSettingsArgs(source, cfg));
+				copy(this, new FindingSettingsArgs(source, cfg, searchPath));
 		}
 
-		public IEnumerable<IIdentifiedSource> TryLoad(IConfigNodeProvider owner, IncludeFileConfig cfg)
+		public IEnumerable<IIdentifiedSource> TryLoad(IConfigNodeProvider owner, IncludeFileConfig cfg, string searchPath)
 		{
-			if (_validExtensions.Count != 0 && !_validExtensions.Contains(Path.GetExtension(cfg.Path)))
+			var filePath = cfg.Path;
+
+			if (_validExtensions.Count != 0 && !_validExtensions.Contains(Path.GetExtension(filePath)))
 				yield break;
 
-			var rpo = owner as IFilePathOwner;
-
-			OnFindingSettings(owner, cfg);
-
-			if (Path.IsPathRooted(cfg.Path))
+			if (Path.IsPathRooted(filePath))
 			{
-				if (!File.Exists(cfg.Path) && !cfg.Required)
+				OnFindingSettings(owner, cfg, null);
+
+				if (!File.Exists(filePath) && !cfg.Required)
 					yield break;
 
-				yield return _creater(cfg.Path);
+				yield return _creater(filePath);
 				yield break;
 			}
 
-			// relative path
-			if (rpo == null)
-				throw new InvalidOperationException("can not be searched for a relative path because the settings do not provide an absolute path");
+			string basePath;
 
-			var found = SearchSettings(rpo.Path, cfg.Path, cfg.Search);
+			if(filePath[0] == '~')
+			{
+				if(searchPath == null || !Path.IsPathRooted(searchPath))
+					throw new InvalidOperationException(
+						string.Format("path '{0}' required rooted search path. But was define '{1}'", filePath, searchPath));
+
+				filePath = filePath.Substring(2); // remove ~ and path separator
+				basePath = searchPath;
+			}
+			else
+			{
+				var rpo = owner as IFilePathOwner;
+				if (rpo == null)
+					throw new InvalidOperationException("can not be searched for a relative path because the settings do not provide an absolute path");
+				basePath = rpo.Path;
+			}
+
+			OnFindingSettings(owner, cfg, basePath);
+			var found = SearchSettings(basePath, filePath, cfg.Search);
 
 			if (found.Count == 0)
 			{
 				if (cfg.Required)
-					throw new ApplicationException(string.Format("configuration file '{0}' not found in '{1}'", cfg.Path, rpo.Path));
+					throw new ApplicationException(string.Format("configuration file '{0}' not found in '{1}'", filePath, basePath));
 
 				yield break;
 			}

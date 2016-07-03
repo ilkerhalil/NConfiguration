@@ -8,6 +8,6 @@ namespace NConfiguration.Joining
 {
 	public interface IIncludeHandler<T>
 	{
-		IEnumerable<IIdentifiedSource> TryLoad(IConfigNodeProvider owner, T includeConfig);
+		IEnumerable<IIdentifiedSource> TryLoad(IConfigNodeProvider owner, T includeConfig, string searchPath);
 	}
 }
