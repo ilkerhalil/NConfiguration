@@ -35,9 +35,9 @@ namespace NConfiguration.Monitoring
 			};
 
 			Directory.Move(Path.Combine(tempPath, dirName), Path.Combine(tempPath, dirName + "_moved"));
-			Directory.CreateDirectory(Path.Combine(tempPath, dirName)); //no lock directory
 
-			Assert.IsTrue(wait.WaitOne(1000), "no event");
+			Assert.IsTrue(wait.WaitOne(5000), "no event");
+			Directory.CreateDirectory(Path.Combine(tempPath, dirName)); //no lock directory
 		}
 
 		[TestCase]
@@ -61,9 +61,9 @@ namespace NConfiguration.Monitoring
 			};
 
 			Directory.Delete(Path.Combine(tempPath, dirName), true);
-			Directory.CreateDirectory(Path.Combine(tempPath, dirName)); //no lock directory
 
-			Assert.IsTrue(wait.WaitOne(1000), "no event");
+			Assert.IsTrue(wait.WaitOne(5000), "no event");
+			Directory.CreateDirectory(Path.Combine(tempPath, dirName)); //no lock directory
 		}
 	}
 }
